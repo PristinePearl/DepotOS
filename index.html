@@ -97,14 +97,9 @@ body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text
   font-size: 11.5px; font-weight: 600; color: var(--blue);
   display: flex; align-items: center; gap: 7px;
 }
-
 .header-brand img {
-  height: 36px;
-  width: auto;
-  display: block;   /* 🔥 THIS FIXES BREAK */
-  object-fit: contain;
+  height: 36px; width: auto; display: block; object-fit: contain;
 }
-
 .sync-pill {
   display: flex; align-items: center; gap: 6px;
   padding: 5px 12px; border-radius: 20px;
@@ -212,11 +207,9 @@ input::placeholder { color: var(--text4); }
 .btn-ghost:hover { background: var(--surface2); color: var(--text); }
 .btn-snapshot {
   background: linear-gradient(135deg, #d97706, #f59e0b);
-  color: white;
-  border: none;
+  color: white; border: none;
   box-shadow: 0 2px 8px rgba(217,119,6,0.35);
-  font-size: 13px;
-  padding: 9px 20px;
+  font-size: 13px; padding: 9px 20px;
 }
 .btn-snapshot:hover { background: linear-gradient(135deg, #b45309, #d97706); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(217,119,6,0.4); }
 .btn-snapshot.capturing { animation: snapPulse 0.6s ease; }
@@ -325,18 +318,8 @@ tbody tr:nth-child(5) { animation-delay:0.12s; }
   animation: fadeInUp 0.25s ease;
   transition: box-shadow 0.2s;
 }
-
-.header-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.header-brand div {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
+.header-brand { display: flex; align-items: center; gap: 12px; }
+.header-brand div { display: flex; flex-direction: column; justify-content: center; }
 .entry-row:hover { box-shadow: var(--shadow-sm); }
 .remove-btn {
   background: none; border: none; color: var(--text4);
@@ -493,6 +476,25 @@ tbody tr:nth-child(5) { animation-delay:0.12s; }
 
 .code-chip { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; color: var(--text3); background: var(--surface2); border: 1px solid var(--border); padding: 2px 8px; border-radius: 5px; }
 
+/* Sales Return info banner */
+.sr-info-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fef9ec 100%);
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sr-info-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: #fcd34d; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0;
+}
+.sr-info-title { font-size: 13px; font-weight: 700; color: #92400e; }
+.sr-info-sub { font-size: 11.5px; color: #b45309; margin-top: 2px; }
+
 @media (max-width:700px) {
   .entry-row { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
@@ -582,16 +584,17 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
     <circle cx="10" cy="10" r="8"/>
     <path d="M10 9v5M10 7v.5" stroke-linecap="round"/>
   </symbol>
+  <symbol id="icon-sheet" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6">
+    <rect x="2" y="2" width="16" height="16" rx="2"/>
+    <path d="M2 7h16M2 12h16M7 7v9" stroke-linecap="round"/>
+  </symbol>
 </defs>
 </svg>
 
 <!-- HEADER -->
 <header class="header">
   <div class="header-brand">
-<img 
-  src="https://www.pristinepearlpharma.in/images/alt-logo.png"
-  alt="Logo"
-/>
+    <img src="https://www.pristinepearlpharma.in/images/alt-logo.png" alt="Logo"/>
     <div>
       <div class="logo-name">DepotOS</div>
       <div class="logo-sub">Management System</div>
@@ -714,6 +717,7 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
         <select id="order-state">
           <option value="">Select State</option>
           <option>TN01</option><option>TN02</option><option>KL</option>
+          <option>JK</option><option>KA</option><option>GOA</option>
         </select>
       </div>
       <div class="form-group"><label>Customer Name</label><input type="text" id="order-customer" placeholder="Enter customer name"></div>
@@ -768,7 +772,7 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
       <div class="form-row">
         <div class="form-group"><label>Date</label><input type="date" id="sales-date"></div>
         <div class="form-group"><label>Depot</label><select id="sales-depot"><option value="">Select</option><option>Mother Depot / HO</option><option>Depot CBE</option><option>Direct Billing</option></select></div>
-        <div class="form-group"><label>State</label><select id="sales-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option></select></div>
+        <div class="form-group"><label>State</label><select id="sales-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option><option>JK</option><option>KA</option><option>GOA</option></select></div>
         <div class="form-group"><label>Party</label><input type="text" id="sales-party" placeholder="Party name"></div>
         <div class="form-group"><label>Inv No.</label><input type="text" id="sales-inv" placeholder="Invoice number"></div>
         <div class="form-group"><label>Value (₹)</label><input type="number" id="sales-value" placeholder="0.00" step="0.01"></div>
@@ -803,7 +807,7 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
           <div class="rule-item"><div class="rule-num">1</div><div class="rule-text">Required columns: <strong>Date, Depot, State, Party, Inv No., Value</strong> — must appear in the first row as headers.</div></div>
           <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>Date</strong> format: YYYY-MM-DD (e.g. 2025-07-15) or Excel date serial. DD/MM/YYYY is not auto-detected.</div></div>
           <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Depot</strong> accepts: <em>Mother Depot / HO</em>, <em>Depot CBE</em>, <em>Direct Billing</em>, or short codes <em>HO, CBE, DIRECT</em>.</div></div>
-          <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>State</strong> must be one of: <em>TN01, TN02, KL</em>. Other values will be imported but may not appear in Flash.</div></div>
+          <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>State</strong> must be one of: <em>TN01, TN02, KL, JK, KA, GOA</em>. Other values will be imported but may not appear in Flash.</div></div>
           <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Value</strong> must be a number without ₹ symbol or commas. Blank values default to 0.</div></div>
           <div class="rule-item"><div class="rule-num">6</div><div class="rule-text">Only <strong>.xlsx or .xls</strong> files are supported. Use the <em>Template</em> button to download a pre-formatted file.</div></div>
         </div>
@@ -857,7 +861,7 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
       <div class="form-row">
         <div class="form-group"><label>Date</label><input type="date" id="collection-date"></div>
         <div class="form-group"><label>Depot</label><select id="collection-depot"><option value="">Select</option><option>Mother Depot / HO</option><option>Depot CBE</option><option>Direct Billing</option></select></div>
-        <div class="form-group"><label>State</label><select id="collection-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option></select></div>
+        <div class="form-group"><label>State</label><select id="collection-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option><option>JK</option><option>KA</option><option>GOA</option></select></div>
         <div class="form-group"><label>Party</label><input type="text" id="collection-party" placeholder="Party name"></div>
         <div class="form-group"><label>Value (₹)</label><input type="number" id="collection-value" placeholder="0.00" step="0.01"></div>
       </div>
@@ -917,94 +921,91 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
   </div>
 </div>
 
-<!-- ════ RETURN ════ -->
+<!-- ════ RETURN — READ ONLY FROM GOOGLE SHEET ════ -->
 <div id="tab-return" class="tab-content">
   <div class="page-hd animate-in">
-    <div><div class="page-title">Sales Return</div><div class="page-sub">Manual entry or import from Excel</div></div>
+    <div>
+      <div class="page-title">Sales Return</div>
+      <div class="page-sub">Live data from Database — consolidated by SR Ref No.</div>
+    </div>
     <div class="page-hd-actions">
-      <button class="btn btn-outline btn-sm" onclick="downloadTemplate('return')">
-        <svg width="14" height="14"><use href="#icon-download"/></svg>Template
+      <div class="form-group">
+        <label>Filter by Date</label>
+        <input type="date" id="return-date-filter" onchange="loadSalesReturn()" style="width:170px;">
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="loadSalesReturn()" style="margin-top:22px;">
+        <svg width="14" height="14"><use href="#icon-refresh"/></svg>Refresh
       </button>
-      <button class="btn btn-danger btn-sm" onclick="clearModule('return')">
-        <svg width="14" height="14"><use href="#icon-trash"/></svg>Clear
+      <button class="btn btn-outline btn-sm" onclick="exportReturnExcel()" style="margin-top:22px;">
+        <svg width="14" height="14"><use href="#icon-export"/></svg>Export Excel
       </button>
     </div>
   </div>
-  <div class="card animate-in animate-in-delay-1" style="margin-bottom:16px;">
-    <div class="inner-tabs">
-      <button class="inner-tab active" onclick="switchInner('return','manual',this)">
-        <svg width="14" height="14"><use href="#icon-manual"/></svg>Manual Entry
-      </button>
-      <button class="inner-tab" onclick="switchInner('return','import',this)">
-        <svg width="14" height="14"><use href="#icon-upload"/></svg>Import Excel
-      </button>
+
+  <!-- Info banner -->
+  <div class="sr-info-banner animate-in">
+    <div class="sr-info-icon">
+      <svg width="20" height="20" style="color:#92400e;"><use href="#icon-sheet"/></svg>
     </div>
-    <div id="return-panel-manual" class="inner-panel active">
-      <div class="card-hd"><span class="dot dot-red"></span>New Return Entry</div>
-      <div class="form-row">
-        <div class="form-group"><label>Date</label><input type="date" id="return-date"></div>
-        <div class="form-group"><label>Depot</label><select id="return-depot"><option value="">Select</option><option>Mother Depot / HO</option><option>Depot CBE</option><option>Direct Billing</option></select></div>
-        <div class="form-group"><label>State</label><select id="return-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option></select></div>
-        <div class="form-group"><label>SR Ref</label><input type="text" id="return-ref" placeholder="SR reference"></div>
-        <div class="form-group"><label>Party</label><input type="text" id="return-party" placeholder="Party name"></div>
-        <div class="form-group"><label>Qty</label><input type="number" id="return-qty" placeholder="0"></div>
-        <div class="form-group"><label>Value (₹)</label><input type="number" id="return-value" placeholder="0.00" step="0.01"></div>
-      </div>
-      <div id="return-extra-rows" class="manual-extra-rows"></div>
-      <button class="add-row-btn" onclick="addManualRow('return')">
-        <span class="plus-circle"><svg width="14" height="14" style="color:#64748b;"><use href="#icon-plus"/></svg></span>
-        Add Another Row
-      </button>
-      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px;">
-        <button class="btn btn-ghost btn-sm" onclick="clearManual('return')">Clear</button>
-        <button class="btn btn-success" onclick="saveManual('return')">
-          <svg width="14" height="14"><use href="#icon-save"/></svg>Save Entry
-        </button>
-      </div>
-    </div>
-    <div id="return-panel-import" class="inner-panel">
-      <div class="card-hd"><span class="dot dot-red"></span>Import Excel File</div>
-      <div class="import-zone" onclick="document.getElementById('return-file').click()" id="return-drop-zone"
-           ondragover="dragOver(event,'return-drop-zone')" ondrop="dropFile(event,'return')" ondragleave="dragLeave('return-drop-zone')">
-        <div class="import-icon-wrap"><svg width="48" height="48" style="color:#dc2626;"><use href="#icon-upload"/></svg></div>
-        <div class="import-text">Click or <strong>drag &amp; drop</strong> your Excel file<br>
-          <small style="color:#94a3b8;">Columns: Date | Depot | State | SR Ref | Party | Qty | Value</small></div>
-      </div>
-      <input type="file" id="return-file" accept=".xlsx,.xls" style="display:none" onchange="importFile(event,'return')">
-      <div class="import-rules" style="margin-top:16px;">
-        <div class="import-rules-title">
-          <svg width="14" height="14"><use href="#icon-info"/></svg>
-          Import Rules &amp; Guidelines
-        </div>
-        <div class="rules-grid">
-          <div class="rule-item"><div class="rule-num">1</div><div class="rule-text">Required columns: <strong>Date, Depot, State, SR Ref, Party, Qty, Value</strong> — row 1 must be headers.</div></div>
-          <div class="rule-item"><div class="rule-num">2</div><div class="rule-text"><strong>SR Ref</strong> is the sales return reference number. Can be alphanumeric (e.g. SR-2025-001).</div></div>
-          <div class="rule-item"><div class="rule-num">3</div><div class="rule-text"><strong>Qty</strong> must be a whole number. <strong>Value</strong> must be numeric without ₹ symbol or commas.</div></div>
-          <div class="rule-item"><div class="rule-num">4</div><div class="rule-text"><strong>Date</strong>: use YYYY-MM-DD or Excel date serial format for best compatibility.</div></div>
-          <div class="rule-item"><div class="rule-num">5</div><div class="rule-text"><strong>Depot</strong> short codes: <em>HO, CBE, DIRECT</em> are auto-mapped to full names.</div></div>
-          <div class="rule-item"><div class="rule-num">6</div><div class="rule-text">Use the <strong>Template</strong> button for a pre-formatted file with all column headers ready.</div></div>
-        </div>
-        <div style="margin-top:12px;">
-          <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#0369a1;margin-bottom:6px;">Required column headers:</div>
-          <div class="rule-cols">
-            <span class="col-chip required">Date</span>
-            <span class="col-chip required">Depot</span>
-            <span class="col-chip required">State</span>
-            <span class="col-chip">SR Ref</span>
-            <span class="col-chip required">Party</span>
-            <span class="col-chip">Qty</span>
-            <span class="col-chip required">Value</span>
-          </div>
-        </div>
-      </div>
+    <div>
+      <div class="sr-info-title">Live Sales Return Connection</div>
+      <div class="sr-info-sub">Data is fetched directly from the Sales Return DB and consolidated by SR Ref No. Filter by R. GEN DATE to narrow results.</div>
     </div>
   </div>
-  <div class="section-divider animate-in animate-in-delay-2">Saved Returns <span class="count-badge" id="return-count">0</span></div>
-  <div class="table-wrap animate-in animate-in-delay-3">
-    <table>
-      <thead><tr><th>Date</th><th>Depot</th><th>State</th><th>SR Ref</th><th>Party</th><th>Qty</th><th>Value</th></tr></thead>
-      <tbody id="return-saved-tbody"></tbody>
-    </table>
+
+  <div class="card animate-in animate-in-delay-1">
+    <div id="return-loading" class="loading-state">
+      <div class="spinner-lg spinner" style="margin:0 auto 16px;"></div>
+      <p>Fetching Sales Return data…</p>
+      <div style="margin-top:16px;">
+        <div class="skeleton skeleton-row"></div>
+        <div class="skeleton skeleton-row"></div>
+        <div class="skeleton skeleton-row"></div>
+        <div class="skeleton skeleton-row"></div>
+      </div>
+    </div>
+    <div id="return-summary-bar" style="display:none;margin-bottom:16px;padding:14px 18px;background:linear-gradient(135deg,#fef2f2,#fff5f5);border:1px solid #fecaca;border-radius:10px;align-items:center;gap:24px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:2px;">Total Records</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:#991b1b;" id="return-total-count">0</div>
+      </div>
+      <div>
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:2px;">Total Value</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:#991b1b;" id="return-total-value">₹0</div>
+      </div>
+      <div>
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#dc2626;margin-bottom:2px;">Unique Parties</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;color:#991b1b;" id="return-unique-parties">0</div>
+      </div>
+    </div>
+    <div id="return-table-wrap" class="table-wrap" style="display:none">
+      <table>
+        <thead>
+          <tr>
+            <th width="40">#</th>
+            <th>SR Ref No.</th>
+            <th>R. Gen Date</th>
+            <th>Stockist Name</th>
+            <th>Area</th>
+            <th>State</th>
+            <th style="text-align:right;">Total (₹)</th>
+          </tr>
+        </thead>
+        <tbody id="return-tbody"></tbody>
+      </table>
+    </div>
+    <div id="return-empty" style="display:none;" class="loading-state">
+      <svg width="40" height="40" style="color:#94a3b8;margin:0 auto 14px;display:block;"><use href="#icon-return"/></svg>
+      <p>No sales return records found for selected date</p>
+    </div>
+    <div id="return-error" style="display:none;" class="loading-state">
+      <svg width="40" height="40" style="color:#dc2626;margin:0 auto 14px;display:block;"><use href="#icon-warning"/></svg>
+      <p style="color:#dc2626;" id="return-error-msg"></p>
+      <small>Check network connection or Google Sheet access</small>
+      <br><button class="btn btn-outline btn-sm" onclick="loadSalesReturn()" style="margin-top:14px;">
+        <svg width="13" height="13"><use href="#icon-refresh"/></svg>Retry
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1037,7 +1038,7 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
       <div class="form-row">
         <div class="form-group"><label>Date</label><input type="date" id="cn-date"></div>
         <div class="form-group"><label>Depot</label><select id="cn-depot"><option value="">Select</option><option>Mother Depot / HO</option><option>Depot CBE</option><option>Direct Billing</option></select></div>
-        <div class="form-group"><label>State</label><select id="cn-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option></select></div>
+        <div class="form-group"><label>State</label><select id="cn-state"><option value="">Select</option><option>TN01</option><option>TN02</option><option>KL</option><option>JK</option><option>KA</option><option>GOA</option></select></div>
         <div class="form-group"><label>CN Ref</label><input type="text" id="cn-ref" placeholder="CN reference no."></div>
         <div class="form-group"><label>Party</label><input type="text" id="cn-party" placeholder="Party name"></div>
         <div class="form-group"><label>Value (₹)</label><input type="number" id="cn-value" placeholder="0.00" step="0.01"></div>
@@ -1106,7 +1107,6 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
   <div class="page-hd animate-in">
     <div><div class="page-title">Flash Report</div><div class="page-sub">Daily business summary across all modules</div></div>
     <div class="page-hd-actions">
-      <!-- SINGLE SNAPSHOT BUTTON — replaces all per-card image buttons -->
       <button class="btn btn-snapshot" id="snapshot-btn" onclick="takeSnapshot()">
         <svg width="15" height="15"><use href="#icon-camera"/></svg>
         Snapshot
@@ -1144,47 +1144,87 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzM1cTnXZ7XCks5Xodq8Ba5Qnaum3rkU0-Ib2lKVJglqjynC4tOl2CSc4udz1xn-LmXgQ/exec';
+const GAS_URL   = 'https://script.google.com/macros/s/AKfycbzM1cTnXZ7XCks5Xodq8Ba5Qnaum3rkU0-Ib2lKVJglqjynC4tOl2CSc4udz1xn-LmXgQ/exec';
 const STOCK_URL = 'https://script.google.com/macros/s/AKfycbwSzWZ5E-DRulTQRFdiWWq_PAGCooPKXzugvvOiQvNPwNmfIMwzcZaYtA5_Mqo9SLkRXg/exec';
 
-let stockData = [];
-let stockLoaded = false;
+// Sales Return direct Google Sheet CSV URL
+const SR_SHEET_ID  = '1xJ2Ff_-FiT7WPlazXD-lp9c7i3h_2y4rTZIh4keYeH4';
+const SR_SHEET_CSV = `https://docs.google.com/spreadsheets/d/${SR_SHEET_ID}/gviz/tq?tqx=out:csv`;
+
+let stockData      = [];
+let stockLoaded    = false;
+let srData         = []; // cached sales return raw rows (consolidated)
+
+// All valid states
+const ALL_STATES = ['TN01','TN02','KL','JK','KA','GOA'];
 
 // ══════════════════════════════════════════════
-// DATE UTILITIES — FIXED
+// DATE UTILITIES
 // ══════════════════════════════════════════════
-// Normalise any date value coming from GAS (could be a JS Date object
-// serialised as a locale string, an ISO string, a serial number, or a
-// formatted string like "15/07/2025") into a plain YYYY-MM-DD string.
+
+/**
+ * normaliseDate — converts any incoming date value to YYYY-MM-DD.
+ *
+ * The Google Sheet "R.GEN DATE" column comes in as:
+ *   "MM/DD/YYYY HH:MM:SS"  (e.g. "04/02/2026 11:05:44")
+ *
+ * Previous code had a DD/MM/YYYY regex that incorrectly swapped
+ * month and day for this format.  We now detect the datetime
+ * format first (before any ambiguous slash-separated pattern)
+ * and parse it as MM/DD/YYYY.
+ */
 function normaliseDate(val) {
   if (!val) return '';
+  const s = String(val).trim();
+
   // Already ISO
-  if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val.trim())) return val.trim();
-  // ISO with time component
-  if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(val)) return val.substring(0, 10);
-  // DD/MM/YYYY
-  const dmy = String(val).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (dmy) return `${dmy[3]}-${dmy[2].padStart(2,'0')}-${dmy[1].padStart(2,'0')}`;
-  // Excel / GAS serial (numbers > 40000 are dates after 1900)
-  const num = Number(val);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if (/^\d{4}-\d{2}-\d{2}T/.test(s)) return s.substring(0, 10);
+
+    // ── DD/MM/YYYY HH:MM:SS  (your Sales Return sheet format) ──
+  const dmyTime = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+\d{1,2}:\d{2}/);
+  if (dmyTime) {
+    // Your sheet exports dates as DD/MM/YYYY HH:MM:SS
+    const [, dd, mm, yyyy] = dmyTime;
+    return `${yyyy}-${mm.padStart(2,'0')}-${dd.padStart(2,'0')}`;
+  }
+
+  // MM/DD/YYYY or DD/MM/YYYY plain (no time) — assume MM/DD/YYYY from sheet
+  const slash = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) {
+    const [, p1, p2, yyyy] = slash;
+    // If first part > 12 it must be DD; otherwise treat as MM/DD (Google Sheets default)
+    if (Number(p1) > 12) {
+      return `${yyyy}-${p2.padStart(2,'0')}-${p1.padStart(2,'0')}`;
+    }
+    return `${yyyy}-${p1.padStart(2,'0')}-${p2.padStart(2,'0')}`;
+  }
+
+  // DD-Mon-YYYY e.g. 15-Jul-2025
+  const dMonY = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+  if (dMonY) {
+    const months = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',
+                    Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+    const m = months[dMonY[2]];
+    if (m) return `${dMonY[3]}-${m}-${dMonY[1].padStart(2,'0')}`;
+  }
+
+  // Excel serial
+  const num = Number(s);
   if (!isNaN(num) && num > 40000 && num < 100000) {
     return new Date(Math.round((num - 25569) * 86400 * 1000)).toISOString().split('T')[0];
   }
-  // GAS sometimes returns Date objects serialised via JSON as ISO strings with Z
-  if (typeof val === 'string' && val.includes('T') && val.includes('Z')) {
-    return val.split('T')[0];
-  }
-  // GAS Date objects serialised as locale strings like "Mon Jul 14 2025 00:00:00 GMT+0530"
-  // Attempt native Date parse as a last resort
+
+  // ISO with Z
+  if (s.includes('T') && s.includes('Z')) return s.split('T')[0];
+
+  // Last resort
   try {
-    const d = new Date(val);
-    if (!isNaN(d.getTime())) {
-      // Interpret in UTC to avoid timezone shift
-      const iso = d.toISOString().split('T')[0];
-      return iso;
-    }
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) return d.toISOString().split('T')[0];
   } catch(e) {}
-  return String(val).trim();
+
+  return s;
 }
 
 function fmtDate(val) {
@@ -1215,8 +1255,7 @@ async function syncToSheets(type, rows) {
   setSyncStatus('syncing', 'Syncing…');
   try {
     await fetch(GAS_URL, {
-      method: 'POST',
-      mode: 'no-cors',
+      method: 'POST', mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type, rows })
     });
@@ -1226,7 +1265,7 @@ async function syncToSheets(type, rows) {
   } catch (err) {
     setSyncStatus('error', 'Sync failed');
     setTimeout(() => setSyncStatus('', 'Ready'), 6000);
-    showToast('⚠ Saved locally. Google Sheets sync failed: ' + err.message, true);
+    showToast('⚠ Saved locally. Sync failed: ' + err.message, true);
     return false;
   }
 }
@@ -1241,6 +1280,195 @@ async function gasGet(params) {
 }
 
 // ══════════════════════════════════════════════
+// SALES RETURN — CSV FROM GOOGLE SHEET
+// ══════════════════════════════════════════════
+
+// Parse a CSV string into array of objects (header row = keys)
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (!lines.length) return [];
+  function parseLine(line) {
+    const result = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (c === ',' && !inQ) {
+        result.push(cur.trim()); cur = '';
+      } else {
+        cur += c;
+      }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  const headers = parseLine(lines[0]).map(h => h.replace(/^"|"$/g,'').trim());
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const vals = parseLine(lines[i]).map(v => v.replace(/^"|"$/g,'').trim());
+    const obj = {};
+    headers.forEach((h, idx) => { obj[h] = vals[idx] || ''; });
+    rows.push(obj);
+  }
+  return rows;
+}
+
+function getSRValue(row, keys) {
+  for (const k of keys) {
+    if (row[k] !== undefined && row[k] !== '') return row[k];
+  }
+  return '';
+}
+
+async function fetchSalesReturnData() {
+  const url = SR_SHEET_CSV + '&cb=' + Date.now();
+  const res  = await fetch(url);
+  if (!res.ok) throw new Error('HTTP ' + res.status + ' — ensure sheet is publicly accessible');
+  const text = await res.text();
+  const rows = parseCSV(text);
+  return rows.filter(r => Object.values(r).some(v => v && v.toString().trim() !== ''));
+}
+
+function normaliseSRRow(row) {
+  const srRef   = getSRValue(row, ['SR REF NO.','SR REF NO','SR_REF_NO','SRREFNO','SR Ref No.','SR Ref No','sr ref no.','sr ref no']);
+  const rawDate = getSRValue(row, ['R.GEN DATE','R. GEN DATE','RGEN DATE','R.GEN_DATE','R GEN DATE','r.gen date','r gen date']);
+  const party   = getSRValue(row, ['STOCKIST NAME','Stockist Name','stockist name','STOCKISTNAME']);
+  const area    = getSRValue(row, ['AREA','Area','area']);
+  const state   = getSRValue(row, ['STATE','State','state']);
+  const total   = getSRValue(row, ['TOTAL','Total','total','GRAND TOTAL','Grand Total']);
+  return {
+    srRef,
+    date:  normaliseDate(rawDate),   // ← fixed date parsing applied here
+    party,
+    area,
+    state: (state || '').toUpperCase().trim(),
+    value: parseFloat(String(total).replace(/[₹,\s]/g,'')) || 0
+  };
+}
+
+/**
+ * consolidateSRRows — collapse multiple sheet rows that share the
+ * same SR Ref No. into a single display row, summing the value.
+ * Rows without any SR ref are keyed by party name instead.
+ */
+function consolidateSRRows(rows) {
+  const map = new Map();
+  for (const r of rows) {
+    const key = r.srRef ? r.srRef.trim() : ('__noref__' + r.party);
+    if (map.has(key)) {
+      const existing = map.get(key);
+      existing.value += r.value;
+      // Keep the earliest date; keep first party/area/state seen
+    } else {
+      map.set(key, { ...r });
+    }
+  }
+  return Array.from(map.values());
+}
+
+async function loadSalesReturn() {
+  const dateFilter = document.getElementById('return-date-filter').value;
+
+  document.getElementById('return-loading').style.display = 'block';
+  document.getElementById('return-table-wrap').style.display = 'none';
+  document.getElementById('return-empty').style.display = 'none';
+  document.getElementById('return-error').style.display = 'none';
+  const summaryBar = document.getElementById('return-summary-bar');
+  summaryBar.style.display = 'none';
+
+  try {
+    const raw = await fetchSalesReturnData();
+    // Store normalised (non-consolidated) rows for flash/export reuse
+    const normalised = raw.map(normaliseSRRow);
+
+    let filtered = normalised;
+    if (dateFilter) {
+      filtered = normalised.filter(r => r.date === dateFilter);
+    }
+    // Remove fully-empty rows
+    filtered = filtered.filter(r => r.srRef || r.party);
+
+    // ── CONSOLIDATE by SR Ref No. ──
+    const consolidated = consolidateSRRows(filtered);
+
+    // Update global cache (consolidated for flash too)
+    srData = consolidateSRRows(normalised.filter(r => r.srRef || r.party));
+
+    document.getElementById('return-loading').style.display = 'none';
+
+    if (!consolidated.length) {
+      document.getElementById('return-empty').style.display = 'block';
+      return;
+    }
+
+    // Summary
+    const totalVal      = consolidated.reduce((s, r) => s + r.value, 0);
+    const uniqueParties = new Set(consolidated.map(r => r.party).filter(Boolean)).size;
+    document.getElementById('return-total-count').textContent = consolidated.length;
+    document.getElementById('return-total-value').textContent = fmtCurrency(totalVal);
+    document.getElementById('return-unique-parties').textContent = uniqueParties;
+    summaryBar.style.display = 'flex';
+
+    // Table
+    document.getElementById('return-table-wrap').style.display = 'block';
+    document.getElementById('return-tbody').innerHTML = consolidated.map((r, i) => `
+      <tr>
+        <td style="color:#94a3b8;font-size:12px;">${i + 1}</td>
+        <td class="td-mono" style="font-weight:600;">${r.srRef || '—'}</td>
+        <td class="td-mono">${fmtDate(r.date)}</td>
+        <td style="font-weight:500;color:#0f172a;">${r.party || '—'}</td>
+        <td style="color:#64748b;">${r.area || '—'}</td>
+        <td><span class="badge badge-blue">${r.state || '—'}</span></td>
+        <td class="td-mono" style="text-align:right;font-weight:700;color:#dc2626;">${fmtCurrency(r.value)}</td>
+      </tr>`).join('');
+
+  } catch (e) {
+    document.getElementById('return-loading').style.display = 'none';
+    document.getElementById('return-error').style.display = 'block';
+    document.getElementById('return-error-msg').textContent = 'Could not load data: ' + e.message;
+  }
+}
+
+function exportReturnExcel() {
+  if (!srData.length) { showToast('No data to export — load the data first', true); return; }
+  const dateFilter = document.getElementById('return-date-filter').value;
+  let filtered = srData;
+  if (dateFilter) filtered = srData.filter(r => r.date === dateFilter);
+  if (!filtered.length) { showToast('No records match selected date', true); return; }
+  const exportRows = filtered.map(r => ({
+    'SR Ref No.':    r.srRef,
+    'R. Gen Date':   r.date,
+    'Stockist Name': r.party,
+    'Area':          r.area,
+    'State':         r.state,
+    'Total':         r.value
+  }));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(exportRows);
+  ws['!cols'] = [{ wch: 18 },{ wch: 14 },{ wch: 28 },{ wch: 16 },{ wch: 10 },{ wch: 14 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Sales Return');
+  XLSX.writeFile(wb, `sales_return_${(dateFilter || 'all').replace(/-/g,'')}.xlsx`);
+  showToast('Sales Return exported ✓');
+}
+
+// Derive sales return summary for flash (by state, from consolidated srData)
+function getSRFlashRows(dateFilter) {
+  let filtered = srData;
+  if (dateFilter) filtered = srData.filter(r => r.date === dateFilter);
+  return ALL_STATES.map(s => {
+    const items = filtered.filter(r => r.state === s);
+    return {
+      state: s,
+      count: new Set(items.map(r => r.party).filter(Boolean)).size,
+      value: items.reduce((sum, r) => sum + r.value, 0)
+    };
+  });
+}
+
+// ══════════════════════════════════════════════
 // TABS
 // ══════════════════════════════════════════════
 function switchTab(id, el) {
@@ -1250,7 +1478,8 @@ function switchTab(id, el) {
   el.classList.add('active');
   if (id === 'flash') renderFlash();
   else if (id === 'order') renderOrdersSaved();
-  else if (['sales','collection','return','cn'].includes(id)) renderSavedTable(id);
+  else if (id === 'return') loadSalesReturn();
+  else if (['sales','collection','cn'].includes(id)) renderSavedTable(id);
 }
 
 function switchInner(module, panel, el) {
@@ -1452,7 +1681,7 @@ async function exportOrdersExcel() {
 async function renderOrdersSaved() {
   const tbody   = document.getElementById('order-saved-tbody');
   const countEl = document.getElementById('order-count');
-  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;"><div class="spinner" style="display:inline-block;margin-right:8px;"></div><span style="color:#64748b;font-size:12px;">Loading from Google Sheets…</span></td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;"><div class="spinner" style="display:inline-block;margin-right:8px;"></div><span style="color:#64748b;font-size:12px;">Loading from Database…</span></td></tr>`;
   try {
     const data = await gasGet({ action: 'read', type: 'order' });
     if (!Array.isArray(data)) throw new Error('Invalid response');
@@ -1481,40 +1710,33 @@ async function renderOrdersSaved() {
 const EXTRA_ROW_FIELDS = {
   sales: [
     { label:'Depot', id:'depot', type:'select', opts:['Mother Depot / HO','Depot CBE','Direct Billing'] },
-    { label:'State', id:'state', type:'select', opts:['TN01','TN02','KL'] },
+    { label:'State', id:'state', type:'select', opts:ALL_STATES },
     { label:'Party', id:'party', type:'text', placeholder:'Party name' },
     { label:'Inv No.', id:'inv', type:'text', placeholder:'Invoice no.' },
     { label:'Value (₹)', id:'value', type:'number', placeholder:'0.00' }
   ],
   collection: [
     { label:'Depot', id:'depot', type:'select', opts:['Mother Depot / HO','Depot CBE','Direct Billing'] },
-    { label:'State', id:'state', type:'select', opts:['TN01','TN02','KL'] },
+    { label:'State', id:'state', type:'select', opts:ALL_STATES },
     { label:'Party', id:'party', type:'text', placeholder:'Party name' },
-    { label:'Value (₹)', id:'value', type:'number', placeholder:'0.00' }
-  ],
-  return: [
-    { label:'Depot', id:'depot', type:'select', opts:['Mother Depot / HO','Depot CBE','Direct Billing'] },
-    { label:'State', id:'state', type:'select', opts:['TN01','TN02','KL'] },
-    { label:'SR Ref', id:'ref', type:'text', placeholder:'SR ref' },
-    { label:'Party', id:'party', type:'text', placeholder:'Party name' },
-    { label:'Qty', id:'qty', type:'number', placeholder:'0' },
     { label:'Value (₹)', id:'value', type:'number', placeholder:'0.00' }
   ],
   cn: [
     { label:'Depot', id:'depot', type:'select', opts:['Mother Depot / HO','Depot CBE','Direct Billing'] },
-    { label:'State', id:'state', type:'select', opts:['TN01','TN02','KL'] },
+    { label:'State', id:'state', type:'select', opts:ALL_STATES },
     { label:'CN Ref', id:'ref', type:'text', placeholder:'CN ref' },
     { label:'Party', id:'party', type:'text', placeholder:'Party name' },
     { label:'Value (₹)', id:'value', type:'number', placeholder:'0.00' }
   ]
 };
 
-let extraRowCounts = { sales: 0, collection: 0, return: 0, cn: 0 };
+let extraRowCounts = { sales: 0, collection: 0, cn: 0 };
 
 function addManualRow(type) {
   extraRowCounts[type]++;
   const rid    = extraRowCounts[type];
   const fields = EXTRA_ROW_FIELDS[type];
+  if (!fields) return;
   const today  = new Date().toISOString().split('T')[0];
   const gridStyle = `grid-template-columns: 150px ${fields.map(() => '1fr').join(' ')} 36px;`;
   let html = `<div class="manual-extra-row" id="extra-${type}-${rid}" style="${gridStyle}">`;
@@ -1555,10 +1777,6 @@ function getExtraRows(type) {
       row.Value = document.getElementById(`er-${type}-${rid}-value`)?.value || 0;
     } else if (type === 'collection') {
       row.Value = document.getElementById(`er-${type}-${rid}-value`)?.value || 0;
-    } else if (type === 'return') {
-      row['SR Ref'] = document.getElementById(`er-${type}-${rid}-ref`)?.value?.trim() || '';
-      row.Qty   = document.getElementById(`er-${type}-${rid}-qty`)?.value || 0;
-      row.Value = document.getElementById(`er-${type}-${rid}-value`)?.value || 0;
     } else if (type === 'cn') {
       row['CN Ref'] = document.getElementById(`er-${type}-${rid}-ref`)?.value?.trim() || '';
       row.Value = document.getElementById(`er-${type}-${rid}-value`)?.value || 0;
@@ -1574,7 +1792,6 @@ function getExtraRows(type) {
 const MANUAL_INPUT_MAP = {
   sales:      { Date:'sales-date', Depot:'sales-depot', State:'sales-state', Party:'sales-party', 'Inv No.':'sales-inv', Value:'sales-value' },
   collection: { Date:'collection-date', Depot:'collection-depot', State:'collection-state', Party:'collection-party', Value:'collection-value' },
-  return:     { Date:'return-date', Depot:'return-depot', State:'return-state', 'SR Ref':'return-ref', Party:'return-party', Qty:'return-qty', Value:'return-value' },
   cn:         { Date:'cn-date', Depot:'cn-depot', State:'cn-state', 'CN Ref':'cn-ref', Party:'cn-party', Value:'cn-value' }
 };
 
@@ -1597,13 +1814,14 @@ async function saveManual(type) {
 
 function clearManual(type) {
   const map = MANUAL_INPUT_MAP[type];
+  if (!map) return;
   for (const id of Object.values(map)) {
     const el = document.getElementById(id);
     if (el) el.value = el.tagName === 'SELECT' ? '' : (el.getAttribute('type') === 'date' ? new Date().toISOString().split('T')[0] : '');
   }
   const container = document.getElementById(`${type}-extra-rows`);
   if (container) container.innerHTML = '';
-  extraRowCounts[type] = 0;
+  if (extraRowCounts[type] !== undefined) extraRowCounts[type] = 0;
 }
 
 // ══════════════════════════════════════════════
@@ -1619,7 +1837,6 @@ function normalizeDepot(d) {
 const SCHEMAS = {
   sales:      ['Date','Depot','State','Party','Inv No.','Value'],
   collection: ['Date','Depot','State','Party','Value'],
-  return:     ['Date','Depot','State','SR Ref','Party','Qty','Value'],
   cn:         ['Date','Depot','State','CN Ref','Party','Value']
 };
 
@@ -1660,7 +1877,7 @@ async function processImport(file, type) {
 }
 
 function clearModule(type) {
-  if (!confirm(`Clear all ${type} records? This removes data from Google Sheets (via sheet clear) and cannot be undone.`)) return;
+  if (!confirm(`Clear all ${type} records? This removes data from Google Sheets and cannot be undone.`)) return;
   showToast(`${type} records cleared`);
   renderSavedTable(type);
 }
@@ -1668,7 +1885,7 @@ function clearModule(type) {
 async function renderSavedTable(type) {
   const tbody   = document.getElementById(`${type}-saved-tbody`);
   const countEl = document.getElementById(`${type}-count`);
-  tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;"><div class="spinner" style="display:inline-block;margin-right:8px;"></div><span style="color:#64748b;font-size:12px;">Loading from Google Sheets…</span></td></tr>`;
+  tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;"><div class="spinner" style="display:inline-block;margin-right:8px;"></div><span style="color:#64748b;font-size:12px;">Loading from Database…</span></td></tr>`;
   try {
     const data = await gasGet({ action: 'read', type });
     if (!Array.isArray(data)) throw new Error('Invalid response');
@@ -1683,8 +1900,6 @@ async function renderSavedTable(type) {
         return `<tr><td class="td-mono">${fmtDate(r.Date)}</td><td>${r.Depot||''}</td><td><span class="badge badge-blue">${r.State||''}</span></td><td>${r.Party||''}</td><td class="td-mono">${r['Inv No.']||''}</td><td class="td-mono">${fmtCurrency(r.Value)}</td></tr>`;
       if (type === 'collection')
         return `<tr><td class="td-mono">${fmtDate(r.Date)}</td><td>${r.Depot||''}</td><td><span class="badge badge-blue">${r.State||''}</span></td><td>${r.Party||''}</td><td class="td-mono">${fmtCurrency(r.Value)}</td></tr>`;
-      if (type === 'return')
-        return `<tr><td class="td-mono">${fmtDate(r.Date)}</td><td>${r.Depot||''}</td><td><span class="badge badge-blue">${r.State||''}</span></td><td class="td-mono">${r['SR Ref']||''}</td><td>${r.Party||''}</td><td class="td-mono">${r.Qty||0}</td><td class="td-mono">${fmtCurrency(r.Value)}</td></tr>`;
       if (type === 'cn')
         return `<tr><td class="td-mono">${fmtDate(r.Date)}</td><td>${r.Depot||''}</td><td><span class="badge badge-blue">${r.State||''}</span></td><td class="td-mono">${r['CN Ref']||''}</td><td>${r.Party||''}</td><td class="td-mono">${fmtCurrency(r.Value)}</td></tr>`;
       return '';
@@ -1696,9 +1911,8 @@ async function renderSavedTable(type) {
 }
 
 // ══════════════════════════════════════════════
-// FLASH — DATE FILTER FIXED
+// FLASH
 // ══════════════════════════════════════════════
-const STATES = ['TN01','TN02','KL'];
 let _flashCache = null;
 
 async function renderFlash() {
@@ -1708,20 +1922,26 @@ async function renderFlash() {
   document.getElementById('flash-summary-wrap').innerHTML = `
     <div style="text-align:center;padding:40px 0;">
       <div class="spinner-lg spinner" style="margin:0 auto 14px;"></div>
-      <p style="color:#64748b;font-weight:600;">Fetching data from Google Sheets…</p>
+      <p style="color:#64748b;font-weight:600;">Fetching data…</p>
     </div>`;
   document.getElementById('flash-cards').innerHTML = '';
 
   try {
-    const _fp = { action: 'flash' };
-    if (date) _fp.date = date;
-    const raw = await gasGet(_fp);
+    const gasParams = { action: 'flash' };
+    if (date) gasParams.date = date;
 
-    // ── normalise rows: the GAS response may contain state-level summaries OR
-    //    raw row arrays. Both patterns are handled.
+    const [raw, srRaw] = await Promise.all([
+      gasGet(gasParams),
+      fetchSalesReturnData().catch(() => [])
+    ]);
+
+    // Consolidate SR data for flash
+    const normalisedSR = srRaw.map(normaliseSRRow).filter(r => r.srRef || r.party);
+    srData = consolidateSRRows(normalisedSR);
+
     function normaliseRows(arr) {
-      if (!arr || !arr.length) return STATES.map(s => ({ state: s, count: 0, value: 0 }));
-      return STATES.map(s => {
+      if (!arr || !arr.length) return ALL_STATES.map(s => ({ state: s, count: 0, value: 0 }));
+      return ALL_STATES.map(s => {
         const found = arr.find(r => r.state === s);
         return found ? { state: s, count: Number(found.count || 0), value: Number(found.value || 0) } : { state: s, count: 0, value: 0 };
       });
@@ -1730,8 +1950,8 @@ async function renderFlash() {
     const oRows  = normaliseRows(raw.orders);
     const sRows  = normaliseRows(raw.sales);
     const cRows  = normaliseRows(raw.collection);
-    const rRows  = normaliseRows(raw.salesReturn);
     const cnRows = normaliseRows(raw.cn);
+    const rRows  = getSRFlashRows(date);
 
     const sum  = rows => ({ count: rows.reduce((s, r) => s + r.count, 0), value: rows.reduce((s, r) => s + r.value, 0) });
     const oTot = sum(oRows), sTot = sum(sRows), cTot = sum(cRows), rTot = sum(rRows), cnTot = sum(cnRows);
@@ -1802,7 +2022,7 @@ async function renderFlash() {
     document.getElementById('flash-summary-wrap').innerHTML = `
       <div class="loading-state">
         <svg width="40" height="40" style="color:#dc2626;margin:0 auto 14px;display:block;"><use href="#icon-warning"/></svg>
-        <p style="color:#dc2626;">Failed to load flash data from Google Sheets</p>
+        <p style="color:#dc2626;">Failed to load flash data</p>
         <small>${err.message}</small>
         <br><button class="btn btn-outline btn-sm" onclick="renderFlash()" style="margin-top:14px;">
           <svg width="13" height="13"><use href="#icon-refresh"/></svg>Retry
@@ -1813,26 +2033,20 @@ async function renderFlash() {
 }
 
 // ══════════════════════════════════════════════
-// SNAPSHOT — fixed (no fade, all cards visible)
+// SNAPSHOT
 // ══════════════════════════════════════════════
 async function takeSnapshot() {
   const flashContent = document.getElementById('flash-content');
   if (!flashContent || !flashContent.children.length) {
-    showToast('Generate the Flash report first', true);
-    return;
+    showToast('Generate the Flash report first', true); return;
   }
-
   const hasCards = document.getElementById('flash-cards').children.length > 0;
-  if (!hasCards) {
-    showToast('No flash data to snapshot', true);
-    return;
-  }
+  if (!hasCards) { showToast('No flash data to snapshot', true); return; }
 
   const btn = document.getElementById('snapshot-btn');
   btn.classList.add('capturing');
   btn.disabled = true;
 
-  // Create overlay
   const overlay = document.createElement('div');
   overlay.className = 'snapshot-overlay';
   overlay.innerHTML = `
@@ -1845,49 +2059,32 @@ async function takeSnapshot() {
 
   try {
     const date = document.getElementById('flash-date').value || 'all';
-
-    // 🔥 STEP 1: Hide overlay before capture (fix fade)
     overlay.style.display = 'none';
-
-replaceIconsWithEmoji(flashContent);
-
-    // 🔥 STEP 2: Disable animations (fix missing cards)
+    replaceIconsWithEmoji(flashContent);
     flashContent.querySelectorAll('*').forEach(el => {
       el.style.animation = 'none';
       el.style.transition = 'none';
       el.style.opacity = '1';
     });
-
-    // 🔥 STEP 3: Wait for UI to stabilize
     await new Promise(resolve => setTimeout(resolve, 300));
-
-    // 🔥 STEP 4: Capture
     const canvas = await html2canvas(flashContent, {
-      backgroundColor: '#ffffff',   // fix grey/fade
-      scale: 2.5,                   // HD quality
+      backgroundColor: '#ffffff',
+      scale: 2.5,
       useCORS: true,
       logging: false,
       scrollY: -window.scrollY,
       windowWidth: document.documentElement.scrollWidth,
     });
-
-    // 🔥 STEP 5: Download
     const link = document.createElement('a');
     link.download = `flash_report_${date}.png`;
     link.href = canvas.toDataURL('image/png');
     link.click();
-
     showToast('Snapshot saved successfully ✓');
-
   } catch (e) {
     showToast('Snapshot failed: ' + e.message, true);
   } finally {
-    // Show overlay again (optional)
     overlay.style.display = 'flex';
-
-    // Remove overlay
     overlay.remove();
-
     btn.classList.remove('capturing');
     btn.disabled = false;
   }
@@ -1905,11 +2102,11 @@ function downloadFlashExcel() {
   }
   const summaryData = [
     ['FLASH SUMMARY', displayDate], [],
-    ['=== ORDERS ==='],     ['State','Count','Value (₹)'],     ...rowsToAoa(oRows,  oTot),  [],
-    ['=== SALES ==='],      ['State','Inv Count','Value (₹)'], ...rowsToAoa(sRows,  sTot),  [],
-    ['=== COLLECTION ==='], ['State','Party Count','Value (₹)'],...rowsToAoa(cRows,  cTot),  [],
-    ['=== SALES RETURN ==='],['State','Party Count','Value (₹)'],...rowsToAoa(rRows, rTot),  [],
-    ['=== CREDIT NOTES ==='],['State','Party Count','Value (₹)'],...rowsToAoa(cnRows,cnTot),
+    ['=== ORDERS ==='],      ['State','Count','Value (₹)'],      ...rowsToAoa(oRows,  oTot),  [],
+    ['=== SALES ==='],       ['State','Inv Count','Value (₹)'],  ...rowsToAoa(sRows,  sTot),  [],
+    ['=== COLLECTION ==='],  ['State','Party Count','Value (₹)'],...rowsToAoa(cRows,  cTot),  [],
+    ['=== SALES RETURN ==='],['State','Party Count','Value (₹)'],...rowsToAoa(rRows,  rTot),  [],
+    ['=== CREDIT NOTES ==='],['State','Party Count','Value (₹)'],...rowsToAoa(cnRows, cnTot),
   ];
   const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
   wsSummary['!cols'] = [{ wch: 22 }, { wch: 15 }, { wch: 18 }];
@@ -1940,15 +2137,21 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('stock-date').value = today;
   document.getElementById('order-date').value = today;
   document.getElementById('flash-date').value = today;
+  document.getElementById('return-date-filter').value = today;
   document.getElementById('header-date').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
-  ['sales','collection','return','cn'].forEach(type => {
+  ['sales','collection','cn'].forEach(type => {
     const map = MANUAL_INPUT_MAP[type];
-    if (map.Date) { const el = document.getElementById(map.Date); if (el) el.value = today; }
+    if (map && map.Date) { const el = document.getElementById(map.Date); if (el) el.value = today; }
   });
   addOrderItem();
   loadStock();
   renderOrdersSaved();
-  ['sales','collection','return','cn'].forEach(t => renderSavedTable(t));
+  ['sales','collection','cn'].forEach(t => renderSavedTable(t));
+  // Pre-load SR data silently
+  fetchSalesReturnData().then(raw => {
+    const normalised = raw.map(normaliseSRRow).filter(r => r.srRef || r.party);
+    srData = consolidateSRRows(normalised);
+  }).catch(() => {});
 });
 
 // Ripple on buttons
@@ -1965,227 +2168,26 @@ document.addEventListener('click', e => {
 });
 </script>
 
-<!-- ══════════════════════════════════════════════
-     GOOGLE APPS SCRIPT (code.gs) — UPDATED
-     
-     KEY FIX: normalise dates from the sheet before startsWith() comparison.
-     GAS can store dates as Date objects which serialize differently.
-     Updated readSheet() to convert Date objects to ISO strings before filtering.
-     ══════════════════════════════════════════════
-     
-  ── Paste into code.gs ─────────────────────────
-
-const SHEET_CONFIG = {
-  Order:       { headers: ['Date','Depot','State','Customer Name','Product','Qty','Value','Order sent By'] },
-  Sales:       { headers: ['Date','Depot','State','Party','Inv No.','Value'] },
-  Collection:  { headers: ['Date','Depot','State','Party','Value'] },
-  Sales_Return:{ headers: ['Date','Depot','State','SR Ref','Party','Qty','Value'] },
-  CN:          { headers: ['Date','Depot','State','CN Ref','Party','Value'] }
-};
-
-const DEPOT_MAP = { 'HO':'Mother Depot / HO', 'CBE':'Depot CBE', 'DIRECT':'Direct Billing' };
-function normalizeDepot(depot) {
-  if(!depot) return depot;
-  const upper = String(depot).trim().toUpperCase();
-  return DEPOT_MAP[upper] || depot;
-}
-
-// ── KEY FIX: normalise a cell value that might be a Date object ──
-function normaliseDateCell(val) {
-  if(val instanceof Date) {
-    // Shift by timezone offset so we get local date, not UTC
-    const offset = val.getTimezoneOffset() * 60000;
-    return new Date(val.getTime() - offset).toISOString().split('T')[0];
-  }
-  if(typeof val === 'string') {
-    const s = val.trim();
-    if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-    if(/^\d{4}-\d{2}-\d{2}T/.test(s)) return s.substring(0,10);
-  }
-  return String(val || '');
-}
-
-function setupSheets() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  for(const [name, config] of Object.entries(SHEET_CONFIG)) {
-    let sheet = ss.getSheetByName(name);
-    if(!sheet) sheet = ss.insertSheet(name);
-    if(sheet.getLastRow() === 0) {
-      const hr = sheet.getRange(1,1,1,config.headers.length);
-      hr.setValues([config.headers]);
-      hr.setFontWeight('bold');
-      hr.setBackground('#1a2235');
-      hr.setFontColor('#e2e8f0');
-    }
-  }
-  SpreadsheetApp.getUi().alert('Sheets set up successfully!');
-}
-
-function appendRows(sheetName, rows) {
-  const ss    = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(sheetName);
-  if(!sheet) throw new Error('Sheet not found: ' + sheetName);
-  const config = SHEET_CONFIG[sheetName];
-  rows.forEach(row => {
-    const values = config.headers.map(h => {
-      let val = row[h] !== undefined ? row[h] : '';
-      if(h === 'Depot') val = normalizeDepot(val);
-      return val;
-    });
-    sheet.appendRow(values);
-  });
-}
-
-function doPost(e) {
-  try {
-    const payload   = JSON.parse(e.postData.contents);
-    const {type, rows} = payload;
-    const typeToSheet = { order:'Order', sales:'Sales', collection:'Collection', return:'Sales_Return', cn:'CN' };
-    const sheetName   = typeToSheet[type];
-    if(!sheetName) throw new Error('Unknown type: ' + type);
-    appendRows(sheetName, Array.isArray(rows) ? rows : [rows]);
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'ok', saved: rows.length || 1}))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'error', message:err.message}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function doGet(e) {
-  try {
-    const action = e.parameter.action || 'flash';
-    const date   = e.parameter.date   || '';
-    if(action === 'flash') {
-      return ContentService
-        .createTextOutput(JSON.stringify(getFlashData(date)))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    if(action === 'read') {
-      const type = e.parameter.type;
-      const typeToSheet = { order:'Order', sales:'Sales', collection:'Collection', return:'Sales_Return', cn:'CN' };
-      const sheetName   = typeToSheet[type];
-      if(!sheetName) throw new Error('Unknown type: ' + type);
-      return ContentService
-        .createTextOutput(JSON.stringify(readSheet(sheetName, date)))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    throw new Error('Unknown action: ' + action);
-  } catch(err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({status:'error', message:err.message}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-// ── FIXED: normalise date before filter comparison ──
-function readSheet(sheetName, dateFilter) {
-  const ss    = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(sheetName);
-  if(!sheet || sheet.getLastRow() <= 1) return [];
-  const [headers, ...dataRows] = sheet.getDataRange().getValues();
-  return dataRows
-    .map(row => {
-      const obj = Object.fromEntries(headers.map((h,i) => [h, row[i]]));
-      // Normalise the Date cell for reliable string comparison
-      obj['Date'] = normaliseDateCell(obj['Date']);
-      return obj;
-    })
-    .filter(r => !dateFilter || r['Date'].startsWith(dateFilter));
-}
-
-function getFlashData(dateFilter) {
-  const states = ['TN01','TN02','KL'];
-  function summarize(sheetName, valueKey, countFn) {
-    const rows = readSheet(sheetName, dateFilter);
-    return states.map(state => {
-      const items = rows.filter(r => r['State'] === state);
-      return {
-        state,
-        count: countFn ? countFn(items) : items.length,
-        value: items.reduce((s,r) => s + (Number(r[valueKey]) || 0), 0)
-      };
-    });
-  }
-  function uniquePartyCount(items) { return new Set(items.map(r=>r['Party']).filter(Boolean)).size; }
-  function uniqueInvCount(items)   { return new Set(items.map(r=>r['Inv No.']).filter(Boolean)).size || items.length; }
-  return {
-    date:        dateFilter || 'All',
-    orders:      summarize('Order',       'Value', null),
-    sales:       summarize('Sales',       'Value', uniqueInvCount),
-    collection:  summarize('Collection',  'Value', uniquePartyCount),
-    salesReturn: summarize('Sales_Return','Value', uniquePartyCount),
-    cn:          summarize('CN',          'Value', uniquePartyCount)
-  };
-}
-
-function clearSheetData(sheetName) {
-  const ss    = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = ss.getSheetByName(sheetName);
-  if(!sheet || sheet.getLastRow() <= 1) return;
-  sheet.deleteRows(2, sheet.getLastRow() - 1);
-}
-
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('DepotOS')
-    .addItem('Setup Sheets','setupSheets')
-    .addSeparator()
-    .addItem('Clear Orders','clearOrders')
-    .addItem('Clear Sales','clearSales')
-    .addItem('Clear Collection','clearCollection')
-    .addItem('Clear Sales Return','clearSalesReturn')
-    .addItem('Clear Credit Notes','clearCN')
-    .addToUi();
-}
-
-function clearOrders()      { clearSheetData('Order'); }
-function clearSales()       { clearSheetData('Sales'); }
-function clearCollection()  { clearSheetData('Collection'); }
-function clearSalesReturn() { clearSheetData('Sales_Return'); }
-function clearCN()          { clearSheetData('CN'); }
-
--->
-
 <script>
 const emojiIcons = {
-  "icon-box": "📦",
-  "icon-cart": "🛒",
-  "icon-chart": "📊",
-  "icon-cash": "💰",
-  "icon-return": "↩️",
-  "icon-note": "🧾",
-  "icon-flash": "⚡",
-  "icon-refresh": "🔄",
-  "icon-download": "⬇️",
-  "icon-upload": "⬆️",
-  "icon-trash": "🗑️",
-  "icon-plus": "➕",
-  "icon-save": "💾",
-  "icon-export": "📤",
-  "icon-camera": "📸",
-  "icon-manual": "✍️",
-  "icon-check": "✅",
-  "icon-warning": "⚠️",
-  "icon-calendar": "📅",
-  "icon-info": "ℹ️"
+  "icon-box": "📦", "icon-cart": "🛒", "icon-chart": "📊", "icon-cash": "💰",
+  "icon-return": "↩️", "icon-note": "🧾", "icon-flash": "⚡", "icon-refresh": "🔄",
+  "icon-download": "⬇️", "icon-upload": "⬆️", "icon-trash": "🗑️", "icon-plus": "➕",
+  "icon-save": "💾", "icon-export": "📤", "icon-camera": "📸", "icon-manual": "✍️",
+  "icon-check": "✅", "icon-warning": "⚠️", "icon-calendar": "📅", "icon-info": "ℹ️",
+  "icon-sheet": "📋"
 };
 
 function replaceIconsWithEmoji(container) {
   container.querySelectorAll("svg use").forEach(use => {
     const href = use.getAttribute("href") || use.getAttribute("xlink:href");
     if (!href) return;
-
     const id = href.replace("#", "");
     const emoji = emojiIcons[id];
-
     if (emoji) {
       const span = document.createElement("span");
       span.textContent = emoji;
       span.style.fontSize = "18px";
-
       const svg = use.closest("svg");
       if (svg) svg.replaceWith(span);
     }
