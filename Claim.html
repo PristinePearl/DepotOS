@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pristine — Claim Processor</title>
+<link rel="icon"
+        href="https://www.pristinepearlpharma.in/images/alt-logo.png"
+        type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand:  { DEFAULT:'#F59E0B', light:'#FDE68A', dark:'#B45309', xdark:'#78350F' },
+        rpl:    { DEFAULT:'#F59E0B', light:'#FEF3C7', dark:'#92400E', row:'#FFFBEB' },
+        rd:     { DEFAULT:'#0EA5E9', light:'#E0F2FE', dark:'#075985', row:'#F0F9FF' },
+        teal:   { DEFAULT:'#14B8A6', light:'#CCFBF1', dark:'#0F766E' },
+        coral:  { DEFAULT:'#F97316', light:'#FFEDD5', dark:'#C2410C' },
+        lime:   { DEFAULT:'#84CC16', light:'#F7FEE7', dark:'#4D7C0F' },
+        slate:  { 850:'#1B2334', 900:'#0F172A', 950:'#080D18' },
+      },
+      fontFamily: { sans:['Inter','ui-sans-serif','system-ui'] },
+      animation: {
+        'fade-in': 'fadeIn .3s ease',
+        'slide-up':'slideUp .3s ease',
+        'spin-slow':'spin 1.5s linear infinite',
+        'pulse-dot':'pulseDot 1.2s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeIn:   { from:{opacity:0}, to:{opacity:1} },
+        slideUp:  { from:{opacity:0,transform:'translateY(12px)'}, to:{opacity:1,transform:'translateY(0)'} },
+        pulseDot: { '0%,100%':{transform:'scale(.8)',opacity:.5}, '50%':{transform:'scale(1.2)',opacity:1} },
+      }
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.6.0/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  body { font-family:'Inter',sans-serif; background:#080D18; }
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:#1B2334; }
+  ::-webkit-scrollbar-thumb { background:#374151; border-radius:4px; }
+  .step-connector { width:2px; background:linear-gradient(to bottom,#F59E0B44,transparent); margin-left:19px; height:20px; }
+  .upload-zone { transition: border-color .2s, background .2s; }
+  .upload-zone.drag { border-color:#F59E0B!important; background:#1c1a0e!important; }
+  .table-data { overflow-x:auto; }
+  .table-data::-webkit-scrollbar { height:5px; }
+  .table-data table { border-collapse:collapse; }
+</style>
+</head>
+<body class="min-h-screen text-slate-100">
+
+<!-- ═══════════════════════════════════════════════════════════ HEADER -->
+<header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
+    <div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center flex-shrink-0 bg-white shadow-lg shadow-brand/30">
+      <img src="https://www.pristinepearlpharma.in/images/alt-logo.png" alt="PPP Logo" class="w-full h-full object-contain p-0.5" onerror="this.parentElement.innerHTML='<span class=\'font-extrabold text-sm text-brand\'>PPP</span>'">
+    </div>
+    <div>
+      <h1 class="font-bold text-base leading-tight text-white">Pristine Pearl Pharma Pvt Ltd</h1>
+      <p class="text-xs text-slate-400 mt-0.5">Claim Processor — RD &amp; RPL</p>
+    </div>
+    <div class="ml-auto flex items-center gap-2">
+      <span id="claimBadgeHeader" class="hidden px-3 py-1 rounded-full text-xs font-bold bg-brand/20 text-brand border border-brand/30"></span>
+      <span id="sheetBadgeHeader" class="hidden px-3 py-1 rounded-full text-xs font-bold bg-teal/20 text-teal border border-teal/30"></span>
+      <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:border-brand hover:text-brand cursor-pointer transition-colors" title="Used as the logo on generated PDFs">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M14 8h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span id="logoLabel">PDF Logo</span>
+        <input type="file" id="logoUpload" accept="image/png,image/jpeg" class="hidden" onchange="handleLogoUpload(this.files[0])">
+      </label>
+    </div>
+  </div>
+</header>
+
+<div class="max-w-6xl mx-auto px-6 py-8 space-y-3">
+
+<!-- ═══════════════ STEP 1 — Claim Type -->
+<div class="step-card rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden animate-fade-in" id="card1">
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-800 bg-slate-850">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-brand text-slate-900" id="num1">1</div>
+    <span class="font-semibold text-sm text-white">Select Claim Type</span>
+  </div>
+  <div class="p-6">
+    <div class="grid grid-cols-2 gap-4">
+      <!-- RPL -->
+      <button onclick="selectClaim('RPL')" id="btn-RPL"
+        class="group relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-slate-700 bg-slate-800 hover:border-brand hover:bg-brand/5 transition-all duration-200 cursor-pointer">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-coral flex items-center justify-center shadow-lg shadow-brand/25">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+        <div class="text-center">
+          <p class="font-bold text-white text-base">RPL</p>
+          <p class="text-xs text-slate-400 mt-1">Replacement Claims</p>
+          <p class="text-xs text-brand/70 mt-1 font-medium">Grand Total: RPL Value</p>
+        </div>
+        <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-slate-600 group-[.selected]:border-brand group-[.selected]:bg-brand transition-all" id="radio-RPL"></div>
+      </button>
+      <!-- RD -->
+      <button onclick="selectClaim('RD')" id="btn-RD"
+        class="group relative flex flex-col items-center gap-3 p-6 rounded-xl border-2 border-slate-700 bg-slate-800 hover:border-rd hover:bg-rd-light/5 transition-all duration-200 cursor-pointer">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rd to-teal flex items-center justify-center shadow-lg shadow-rd/25">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="text-center">
+          <p class="font-bold text-white text-base">RD</p>
+          <p class="text-xs text-slate-400 mt-1">Rate Difference Claims</p>
+          <p class="text-xs text-rd/80 mt-1 font-medium">Grand Total: PD Value &amp; Margin</p>
+        </div>
+        <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 border-slate-600 transition-all" id="radio-RD"></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 2 — Upload -->
+<div class="step-connector" id="conn12"></div>
+<div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden opacity-40 pointer-events-none transition-all duration-300" id="card2">
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-800">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400" id="num2">2</div>
+    <span class="font-semibold text-sm text-white">Upload Excel File</span>
+  </div>
+  <div class="p-6">
+    <label class="upload-zone flex flex-col items-center gap-3 p-10 rounded-xl border-2 border-dashed border-slate-700 cursor-pointer hover:border-brand hover:bg-slate-800/50 relative" id="dropzone">
+      <input type="file" id="fileInput" accept=".xlsx,.xls" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onchange="handleFile(this.files[0])">
+      <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+        <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+      </div>
+      <div class="text-center">
+        <p class="font-semibold text-white text-sm">Drop your Excel file here</p>
+        <p class="text-xs text-slate-400 mt-1">or click to browse &nbsp;·&nbsp; .xlsx / .xls</p>
+      </div>
+      <div id="uploadDone" class="hidden flex items-center gap-2 text-lime text-sm font-semibold mt-1">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        <span id="uploadFileName"></span>
+      </div>
+    </label>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 3 — Sheet -->
+<div class="step-connector" id="conn23"></div>
+<div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden opacity-40 pointer-events-none transition-all duration-300" id="card3">
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-800">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400" id="num3">3</div>
+    <span class="font-semibold text-sm text-white">Select Sheet</span>
+    <span class="ml-auto text-xs text-slate-500" id="sheetCount"></span>
+  </div>
+  <div class="p-6">
+    <div class="flex flex-wrap gap-2" id="sheetPills"></div>
+
+    <!-- Month confirmation gate — must confirm before stockists/downloads unlock -->
+    <div id="monthConfirmSection" class="hidden mt-5 pt-5 border-t border-slate-800">
+      <p class="text-sm font-semibold text-white mb-1">Confirm Claim Month</p>
+      <p class="text-xs text-slate-400 mb-3">Detected from the sheet — change it if it's wrong, then confirm to continue.</p>
+      <div class="flex flex-wrap items-center gap-3">
+        <select id="monthSelect" class="px-4 py-2.5 rounded-xl text-sm font-medium border border-slate-700 bg-slate-800 text-white focus:outline-none focus:border-brand"></select>
+        <button onclick="confirmClaimMonth()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-brand to-coral text-slate-900 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-brand/30">
+          Confirm &amp; Continue
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 4 — Stockist -->
+<div class="step-connector" id="conn34"></div>
+<div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden opacity-40 pointer-events-none transition-all duration-300" id="card4">
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-800">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400" id="num4">4</div>
+    <span class="font-semibold text-sm text-white">Select Stockist</span>
+    <span class="ml-auto text-xs text-slate-500" id="stockistCount"></span>
+  </div>
+  <div class="p-6">
+    <!-- Search -->
+    <div class="relative mb-4">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="stockistSearch" placeholder="Search stockist..." oninput="filterStockists()"
+        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand transition-colors">
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="stockistGrid"></div>
+
+    <!-- ── BULK DOWNLOAD (shown here once stockists are loaded) ── -->
+    <div id="bulkSection" class="hidden mt-6 pt-5 border-t border-slate-800">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <p class="text-sm font-semibold text-white">Bulk Download</p>
+          <p class="text-xs text-slate-400 mt-0.5">Export all stockists as individual Excel files in a ZIP</p>
+        </div>
+        <button onclick="bulkDownload()" id="bulkBtn"
+          class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-brand to-coral text-slate-900 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-brand/30">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1M8 12l4 4 4-4M12 3v13"/></svg>
+          Download All Stockists as ZIP
+          <span class="px-1.5 py-0.5 rounded-md bg-slate-900/40 text-xs font-bold" id="bulkCount"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ STEP 5 — Preview & Export -->
+<div class="step-connector" id="conn45"></div>
+<div class="rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden opacity-40 pointer-events-none transition-all duration-300" id="card5">
+  <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-800">
+    <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400" id="num5">5</div>
+    <span class="font-semibold text-sm text-white">Preview &amp; Export</span>
+    <span class="ml-auto text-xs font-semibold text-brand" id="selectedStockistLabel"></span>
+  </div>
+
+  <!-- Grand Total bar -->
+  <div class="flex flex-wrap gap-6 px-6 py-4 border-b border-slate-800 bg-slate-950/50" id="grandTotalBar"></div>
+
+  <!-- Action buttons -->
+  <div class="flex flex-wrap gap-3 px-6 py-4 border-b border-slate-800 bg-slate-950/30">
+    <button onclick="downloadExcel().catch(e=>showToast(e.message,'error'))"
+      class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-lime-600 to-green-600 text-white hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-green-900/40">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Excel
+    </button>
+    <button onclick="downloadPDF()"
+      class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-red-600 to-rose-600 text-white hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-red-900/40">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      PDF
+    </button>
+    <button onclick="openMailModal()"
+      class="flex items-center gap-2 px-4 py-2.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-blue-900/40">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      Mail Template
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-data px-0" id="previewWrap"></div>
+</div>
+
+</div><!-- /max-w -->
+
+<!-- ═══════════════════════════════════════════════════════ MAIL MODAL -->
+<div class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200" id="mailModal">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col mx-4 transform translate-y-4 transition-transform duration-200 shadow-2xl" id="mailModalInner">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+          <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <span class="font-bold text-white">Mail Template</span>
+      </div>
+      <button onclick="closeMailModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-colors">✕</button>
+    </div>
+    <div class="px-6 pt-5 pb-1 grid grid-cols-1 sm:grid-cols-2 gap-3 border-b border-slate-800">
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">To</label>
+        <input type="text" id="mailTo" placeholder="receiver@example.com" class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand transition-colors">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-400 mb-1">CC</label>
+        <input type="text" id="mailCc" placeholder="cc1@example.com, cc2@example.com" class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand transition-colors">
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-xs font-semibold text-slate-400 mb-1">Subject</label>
+        <input type="text" id="mailSubject" class="w-full px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand transition-colors">
+      </div>
+      <div class="sm:col-span-2 pb-4">
+        <button onclick="sendMailWithAttachment()" id="sendMailBtn"
+          class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-teal-600 to-emerald-600 text-white hover:brightness-110 active:scale-95 transition-all">
+          📎 Send Mail (Excel Attached)
+        </button>
+        <p class="text-[11px] text-slate-500 mt-1.5">Opens your mail app's share sheet with the Excel file already attached. To/CC are copied to your clipboard — paste them in if the mail app doesn't carry them over.</p>
+      </div>
+    </div>
+    <div class="overflow-y-auto flex-1 p-6" id="mailBody"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ BULK PROGRESS -->
+<div class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 opacity-0 pointer-events-none transition-opacity duration-200" id="bulkModal">
+  <div class="bg-slate-900 border border-slate-700 rounded-2xl p-8 w-full max-w-sm mx-4 text-center shadow-2xl">
+    <div class="w-16 h-16 rounded-full bg-brand/20 border-2 border-brand flex items-center justify-center mx-auto mb-4">
+      <svg class="w-7 h-7 text-brand animate-spin-slow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+    </div>
+    <h3 class="font-bold text-white text-lg mb-1">Building ZIP</h3>
+    <p class="text-slate-400 text-sm mb-4" id="bulkStatusText">Preparing files…</p>
+    <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+      <div class="h-full bg-gradient-to-r from-brand to-coral rounded-full transition-all duration-300" id="bulkProgress" style="width:0%"></div>
+    </div>
+    <p class="text-xs text-slate-500 mt-2" id="bulkProgressLabel">0 / 0</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ TOAST -->
+<div class="fixed bottom-6 right-6 z-50 flex flex-col gap-2" id="toastStack"></div>
+
+<!-- ═══════════════════════════════════════════════════════ SCRIPT -->
+<script>
+// ─── Column definitions ────────────────────────────────────────────────────
+const RPL_EXPORT_COLS = ['PRODUCT NAME','DIVISION','QTY','FREE','GST','MRP','PTR','PTS','RPL VALUE','REMARK'];
+const RD_EXPORT_COLS  = ['PRODUCT NAME','DIVISION','QTY','GST','CSP','PTS','PD VALUE','MARGIN','REMARK'];
+// Columns that are numeric but NOT currency — displayed as plain numbers
+const NUM_COLS        = ['QTY','FREE','MRP','PTR','PTS','RPL VALUE','CSP','PD VALUE','MARGIN'];
+// GST is intentionally excluded from NUM_COLS and handled separately as a % column
+
+// ─── State ─────────────────────────────────────────────────────────────────
+const S = { claimType:null, workbook:null, selectedSheet:null, sheetData:[], headers:[], stockists:[], selectedStockist:null, filteredRows:[], claimMonth:null };
+
+// ─── Step helpers ───────────────────────────────────────────────────────────
+function enableCard(n){
+  const c=document.getElementById('card'+n);
+  c.classList.remove('opacity-40','pointer-events-none');
+  c.classList.add('animate-slide-up');
+}
+function markNum(n, done){
+  const el=document.getElementById('num'+n);
+  if(done){ el.className='w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-lime text-slate-900'; el.innerHTML='✓'; }
+  else     { el.className='w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-brand text-slate-900'; }
+}
+function lockCard(n){ const c=document.getElementById('card'+n); c.classList.add('opacity-40','pointer-events-none'); }
+
+// ─── Step 1 ─────────────────────────────────────────────────────────────────
+function selectClaim(type){
+  S.claimType=type;
+  ['RPL','RD'].forEach(t=>{
+    const b=document.getElementById('btn-'+t);
+    const r=document.getElementById('radio-'+t);
+    if(t===type){
+      b.classList.add('border-brand','bg-brand/5');
+      b.classList.remove('border-slate-700','bg-slate-800');
+      r.classList.add('bg-brand','border-brand');
+      r.classList.remove('border-slate-600');
+    } else {
+      b.classList.remove('border-brand','bg-brand/5','border-rd','bg-rd-light/5');
+      b.classList.add('border-slate-700','bg-slate-800');
+      r.classList.remove('bg-brand','border-brand','bg-rd','border-rd');
+      r.classList.add('border-slate-600');
+    }
+  });
+  const bh=document.getElementById('claimBadgeHeader');
+  bh.textContent=type+' CLAIM'; bh.classList.remove('hidden');
+  markNum(1,true); enableCard(2); resetFrom(3);
+}
+
+function resetFrom(n){
+  if(n<=3){ S.selectedSheet=null; S.claimMonth=null; document.getElementById('sheetPills').innerHTML=''; document.getElementById('sheetCount').textContent=''; document.getElementById('monthConfirmSection').classList.add('hidden'); lockCard(3); markNum(3,false); document.getElementById('num3').className='w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400'; document.getElementById('sheetBadgeHeader').classList.add('hidden'); }
+  if(n<=4){ S.stockists=[]; S.selectedStockist=null; document.getElementById('stockistGrid').innerHTML=''; document.getElementById('stockistCount').textContent=''; document.getElementById('bulkSection').classList.add('hidden'); lockCard(4); document.getElementById('num4').innerHTML='4'; document.getElementById('num4').className='w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400'; }
+  if(n<=5){ S.filteredRows=[]; document.getElementById('previewWrap').innerHTML=''; document.getElementById('grandTotalBar').innerHTML=''; lockCard(5); document.getElementById('selectedStockistLabel').textContent=''; document.getElementById('num5').innerHTML='5'; document.getElementById('num5').className='w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 bg-slate-700 text-slate-400'; }
+}
+
+// ─── Step 2: Upload ─────────────────────────────────────────────────────────
+const dz=document.getElementById('dropzone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+
+function handleFile(file){
+  if(!file)return;
+  if(!S.claimType){showToast('Select claim type first','error');return;}
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      S.workbook=XLSX.read(e.target.result,{type:'array'});
+      document.getElementById('uploadDone').classList.remove('hidden');
+      document.getElementById('uploadFileName').textContent=file.name;
+      markNum(2,true); resetFrom(3); enableCard(3); renderSheets();
+    }catch(err){showToast('Error reading file: '+err.message,'error');}
+  };
+  r.readAsArrayBuffer(file);
+}
+
+// ─── Step 3: Sheet ──────────────────────────────────────────────────────────
+function renderSheets(){
+  const names=S.workbook.SheetNames;
+  document.getElementById('sheetCount').textContent=names.length+' sheet'+(names.length!==1?'s':'');
+  const c=document.getElementById('sheetPills'); c.innerHTML='';
+  names.forEach(name=>{
+    const p=document.createElement('button');
+    p.className='px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:border-brand hover:text-brand transition-all duration-150';
+    p.textContent=name;
+    p.onclick=()=>selectSheet(name,p);
+    c.appendChild(p);
+  });
+  if(names.length===1)selectSheet(names[0],c.children[0]);
+}
+
+function selectSheet(name,el){
+  document.querySelectorAll('#sheetPills button').forEach(p=>{
+    p.className='px-4 py-2 rounded-xl text-sm font-medium border border-slate-700 bg-slate-800 text-slate-300 hover:border-brand hover:text-brand transition-all duration-150';
+  });
+  el.className='px-4 py-2 rounded-xl text-sm font-medium border border-brand bg-brand/10 text-brand transition-all duration-150';
+  S.selectedSheet=name;
+  const bsh=document.getElementById('sheetBadgeHeader');
+  bsh.textContent=name; bsh.classList.remove('hidden');
+
+  const ws=S.workbook.Sheets[name];
+  const raw=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+  let headerRow=0;
+  for(let i=0;i<Math.min(10,raw.length);i++){
+    if(raw[i].some(c=>String(c).toUpperCase().includes('PRODUCT NAME')||String(c).toUpperCase().includes('STOCKIEST NAME'))){headerRow=i;break;}
+  }
+  S.headers=raw[headerRow].map(h=>String(h).trim());
+  S.sheetData=raw.slice(headerRow+1).filter(r=>r.some(c=>String(c).trim()!=='')).map(r=>{
+    const obj={}; S.headers.forEach((h,i)=>obj[h]=r[i]!==undefined?r[i]:''); return obj;
+  });
+  // ── Extract claim month from Excel data ──────────────────────────────────
+  S.claimMonth = extractClaimMonthFromData(raw, headerRow, S.headers, S.sheetData);
+  markNum(3,true); resetFrom(4);
+  showMonthConfirm(S.claimMonth);
+}
+
+// ─── Month confirmation gate ──────────────────────────────────────────────────
+function showMonthConfirm(detectedMonth){
+  const sel=document.getElementById('monthSelect');
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const curYear=new Date().getFullYear();
+  const options=[];
+  for(let y=curYear+1;y>=curYear-3;y--){
+    MONTHS.forEach(m=>options.push(`${m} ${y}`));
+  }
+  sel.innerHTML=options.map(o=>`<option value="${o}"${o===detectedMonth?' selected':''}>${o}</option>`).join('');
+  if(detectedMonth && !options.includes(detectedMonth)){
+    sel.insertAdjacentHTML('afterbegin',`<option value="${detectedMonth}" selected>${detectedMonth} (detected)</option>`);
+  }
+  document.getElementById('monthConfirmSection').classList.remove('hidden');
+}
+
+function confirmClaimMonth(){
+  S.claimMonth=document.getElementById('monthSelect').value;
+  document.getElementById('monthConfirmSection').classList.add('hidden');
+  const bsh=document.getElementById('sheetBadgeHeader');
+  bsh.textContent=`${S.selectedSheet} · ${S.claimMonth}`;
+  enableCard(4); renderStockists();
+  showToast(`Claim month set: ${S.claimMonth}`,'success');
+}
+
+
+// ─── Step 4: Stockists ───────────────────────────────────────────────────────
+function renderStockists(){
+  const nk=S.headers.find(h=>h.toUpperCase().includes('STOCKIEST NAME')||h.toUpperCase().includes('STOCKIST NAME'))||'STOCKIEST NAME';
+  const lk=S.headers.find(h=>h.toUpperCase().includes('LOCATION'))||'STOCKIEST LOCATION';
+  const map={};
+  S.sheetData.forEach(r=>{
+    const n=String(r[nk]||'').trim(); if(!n)return;
+    if(!map[n])map[n]={name:n,loc:String(r[lk]||'').trim(),count:0};
+    map[n].count++;
+  });
+  S.stockists=Object.values(map).sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('stockistCount').textContent=S.stockists.length+' stockist'+(S.stockists.length!==1?'s':'');
+  document.getElementById('bulkCount').textContent=S.stockists.length;
+  // Show bulk section now that stockists are loaded
+  document.getElementById('bulkSection').classList.remove('hidden');
+  renderStockistCards(S.stockists);
+}
+
+function renderStockistCards(list){
+  const g=document.getElementById('stockistGrid'); g.innerHTML='';
+  list.forEach(s=>{
+    const card=document.createElement('button');
+    card.className='stockist-card text-left p-4 rounded-xl border border-slate-700 bg-slate-800 hover:border-brand hover:bg-brand/5 transition-all duration-150 group';
+    card.dataset.name=s.name;
+    card.innerHTML=`
+      <div class="flex items-start justify-between gap-2">
+        <div class="w-8 h-8 rounded-lg bg-brand/20 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-brand/30 transition-colors">
+          <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+        </div>
+        <span class="flex-shrink-0 px-2 py-0.5 rounded-lg bg-brand/10 text-brand text-xs font-bold">${s.count}</span>
+      </div>
+      <p class="font-semibold text-white text-sm mt-2 leading-tight">${s.name}</p>
+      <p class="text-xs text-slate-400 mt-1">${s.loc||'—'}</p>`;
+    card.onclick=()=>selectStockist(s.name,card);
+    g.appendChild(card);
+  });
+}
+
+function filterStockists(){
+  const q=document.getElementById('stockistSearch').value.toLowerCase();
+  renderStockistCards(S.stockists.filter(s=>s.name.toLowerCase().includes(q)||s.loc.toLowerCase().includes(q)));
+}
+
+function selectStockist(name,el){
+  document.querySelectorAll('.stockist-card').forEach(c=>{
+    c.classList.remove('border-brand','bg-brand/5','ring-1','ring-brand');
+    c.classList.add('border-slate-700','bg-slate-800');
+  });
+  el.classList.add('border-brand','bg-brand/5','ring-1','ring-brand');
+  el.classList.remove('border-slate-700','bg-slate-800');
+  S.selectedStockist=name;
+  const nk=S.headers.find(h=>h.toUpperCase().includes('STOCKIEST NAME')||h.toUpperCase().includes('STOCKIST NAME'))||'STOCKIEST NAME';
+  S.filteredRows=S.sheetData.filter(r=>String(r[nk]||'').trim()===name);
+  markNum(4,true); enableCard(5); renderPreview();
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function getExportCols(){ return S.claimType==='RPL'?RPL_EXPORT_COLS:RD_EXPORT_COLS; }
+
+function findHeader(col){
+  let f=S.headers.find(h=>h.toUpperCase()===col.toUpperCase());
+  if(f)return f;
+  if(col.toUpperCase()==='REMARK')f=S.headers.find(h=>h.toUpperCase().startsWith('REMARK'));
+  return f||col;
+}
+
+function numVal(row,col){ return parseFloat(row[findHeader(col)])||0; }
+function fmt(n){ return n.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+// ── GST display: if value is stored as decimal (<=1), multiply by 100 ──────
+function fmtGST(raw){
+  const n = parseFloat(raw) || 0;
+  const pct = (n > 0 && n <= 1) ? n * 100 : n;
+  return pct % 1 === 0 ? pct.toFixed(0) + '%' : pct.toFixed(2) + '%';
+}
+
+
+// ── Parse a raw string into a formatted "Month YYYY" if it looks like a date ─
+function parseMonthString(val){
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const SHORT  = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  const s = String(val).trim();
+  if(!s) return null;
+  // Excel serial date number → JS Date
+  if(/^\d+(\.\d+)?$/.test(s)){
+    const n=Math.round(parseFloat(s));
+    if(n>30000&&n<60000){
+      const d=new Date(Math.round((n-25569)*86400*1000));
+      return MONTHS[d.getUTCMonth()]+' '+d.getUTCFullYear();
+    }
+  }
+  // "Apr-25" / "Apr 25" / "Apr-2025"
+  const m1=s.match(/^([A-Za-z]{3})[\s\-\/](\d{2,4})$/);
+  if(m1){ const mi=SHORT.indexOf(m1[1].toLowerCase()); if(mi>=0){ const yr=m1[2].length===2?'20'+m1[2]:m1[2]; return MONTHS[mi]+' '+yr; } }
+  // "April-2025" / "April 2025"
+  const m2=s.match(/^([A-Za-z]+)[\s\-\/](\d{4})$/);
+  if(m2){ const mi=MONTHS.findIndex(mn=>mn.toLowerCase()===m2[1].toLowerCase()); if(mi>=0) return MONTHS[mi]+' '+m2[2]; }
+  // "04-2025" / "04/2025" / "2025-04"
+  const m3=s.match(/^(\d{1,2})[\-\/](\d{4})$/) || s.match(/^(\d{4})[\-\/](\d{1,2})$/);
+  if(m3){ const mi=parseInt(m3[1],10)>12?parseInt(m3[2],10)-1:parseInt(m3[1],10)-1; if(mi>=0&&mi<12) return MONTHS[mi]+' '+(m3[1].length===4?m3[1]:m3[2]); }
+  // "April 2025" or "April, 2025" (full month name with year)
+  const m4=s.match(/^([A-Za-z]+)[,\s]+(\d{4})$/);
+  if(m4){ const mi=MONTHS.findIndex(mn=>mn.toLowerCase()===m4[1].toLowerCase()); if(mi>=0) return MONTHS[mi]+' '+m4[2]; }
+  // If raw string already looks like "January 2025"
+  const m5=MONTHS.find(mn=>s.toLowerCase().startsWith(mn.toLowerCase()));
+  if(m5){ const yr=s.match(/(\d{4})/); if(yr) return m5+' '+yr[1]; }
+  return null;
+}
+
+// ── Scan the entire raw sheet (including pre-header rows) for a claim month ──
+function extractClaimMonthFromData(raw, headerRow, headers, sheetData){
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  // 1. Same pattern used for stockist name/location: find a header containing "MONTH",
+  //    then read the value straight from that column in the sheet's own data rows.
+  const monthKey = headers.find(h=>h.toUpperCase().includes('MONTH'));
+  if(monthKey){
+    for(const row of sheetData){
+      const v=row[monthKey];
+      if(v!==undefined&&String(v).trim()!==''){
+        const n=typeof v==='number'?v:null;
+        if(n&&n>30000&&n<60000){
+          const d=new Date(Math.round((n-25569)*86400*1000));
+          return MONTHS[d.getUTCMonth()]+' '+d.getUTCFullYear();
+        }
+        const parsed=parseMonthString(v);
+        if(parsed) return parsed;
+      }
+    }
+  }
+
+  // 2. Scan all rows ABOVE the header row for a label+value pattern
+  for(let i=0;i<headerRow;i++){
+    const row=raw[i];
+    for(let j=0;j<row.length;j++){
+      const cell=String(row[j]||'').trim().toUpperCase();
+      if(cell==='CLAIM MONTH'||cell==='MONTH'||cell==='CLAIM_MONTH'||cell==='CLAIMMONTH'){
+        // Value is either in next column or next row
+        const nextCol=row[j+1];
+        if(nextCol!==undefined&&String(nextCol).trim()){
+          const parsed=parseMonthString(nextCol);
+          if(parsed) return parsed;
+        }
+        if(i+1<headerRow){
+          const nextRow=raw[i+1];
+          for(const c of nextRow){
+            if(c!==undefined&&String(c).trim()){
+              const parsed=parseMonthString(c);
+              if(parsed) return parsed;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 3. Scan ALL cells in the sheet for a date-like value near a "MONTH" label
+  for(let i=0;i<raw.length;i++){
+    const row=raw[i];
+    for(let j=0;j<row.length;j++){
+      const cell=String(row[j]||'').trim();
+      const parsed=parseMonthString(cell);
+      if(parsed){
+        // Only accept if a neighbouring cell has "month" keyword
+        const neighbours=[row[j-1],row[j+1],(raw[i-1]||[])[j],(raw[i+1]||[])[j]];
+        const hasLabel=neighbours.some(n=>n&&String(n).toUpperCase().includes('MONTH'));
+        if(hasLabel) return parsed;
+      }
+    }
+  }
+
+  // 4. Fallback: derive from sheet name (original logic)
+  const name=S.selectedSheet||'';
+  const parsed=parseMonthString(name);
+  if(parsed) return parsed;
+
+  // 5. Last resort: current month
+  return new Date().toLocaleString('en-IN',{month:'long',year:'numeric'});
+}
+
+function getClaimMonth(){
+  return S.claimMonth || new Date().toLocaleString('en-IN',{month:'long',year:'numeric'});
+}
+
+function getStockistInfo(name){
+  return S.stockists.find(s=>s.name===name)||{name,loc:''};
+}
+
+// ─── PDF Logo (stored locally, used in jsPDF header) ─────────────────────────
+function loadStoredLogo(){
+  try{
+    const saved=localStorage.getItem('ppp_pdf_logo');
+    if(saved){ S.logoDataUrl=saved; document.getElementById('logoLabel').textContent='Logo set ✓'; }
+  }catch(e){}
+}
+function handleLogoUpload(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    S.logoDataUrl=e.target.result;
+    try{ localStorage.setItem('ppp_pdf_logo',S.logoDataUrl); }catch(e){}
+    document.getElementById('logoLabel').textContent='Logo set ✓';
+    showToast('Logo saved — it will appear on PDFs','success');
+  };
+  r.onerror=()=>showToast('Could not read logo image','error');
+  r.readAsDataURL(file);
+}
+loadStoredLogo();
+
+// ─── Send Mail with Excel attached (Web Share API) ───────────────────────────
+async function sendMailWithAttachment(){
+  const to=document.getElementById('mailTo').value.trim();
+  const cc=document.getElementById('mailCc').value.trim();
+  const subject=document.getElementById('mailSubject').value.trim()||`${S.claimType} Claim`;
+  if(!to){ showToast('Enter a receiver email address first','error'); return; }
+
+  const btn=document.getElementById('sendMailBtn');
+  const origLabel=btn.innerHTML;
+  btn.disabled=true; btn.innerHTML='Preparing…';
+
+  const st=getStockistInfo(S.selectedStockist);
+  const fileName=`${S.claimType}_${(st.name||'claim').replace(/[\/\\?%*:|"<>]/g,'_')}.xlsx`;
+  const bodyText=`To: ${to}${cc?`\nCC: ${cc}`:''}\n\nPlease find attached the ${S.claimType} claim for ${st.name||''} (${getClaimMonth()}).`;
+
+  function fallbackDownloadAndMailto(file){
+    const url=URL.createObjectURL(file);
+    const a=document.createElement('a'); a.href=url; a.download=fileName; a.click();
+    URL.revokeObjectURL(url);
+    const mailto=`mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText+'\n\n(Attach the downloaded Excel file — this app/browser cannot auto-attach files)')}`;
+    window.open(mailto,'_blank');
+    showToast('Excel downloaded — attach it manually in the mail draft','success');
+  }
+
+  try{
+    const buf=await buildExcelBuffer(S.selectedStockist);
+    const file=new File([buf],fileName,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+
+    // Copy recipient details to clipboard as a safety net (most share targets won't carry custom mail headers)
+    try{ await navigator.clipboard.writeText(`To: ${to}\nCC: ${cc}\nSubject: ${subject}`); }catch(e){}
+
+    let canShareFile=false;
+    try{ canShareFile = !!(navigator.canShare && navigator.canShare({files:[file]})); }catch(e){ canShareFile=false; }
+
+    if(canShareFile){
+      try{
+        await navigator.share({files:[file],title:subject,text:bodyText});
+        showToast('Share sheet opened — pick your mail app to send','success');
+        return;
+      }catch(shareErr){
+        if(shareErr.name==='AbortError'){ return; } // user cancelled the share sheet — don't fall back
+        // Many mobile browsers reject xlsx specifically (only images/pdf/text/audio/video are shareable)
+        // even when canShare() said yes — fall back to download + mailto instead of erroring out.
+        fallbackDownloadAndMailto(file);
+        return;
+      }
+    }
+    fallbackDownloadAndMailto(file);
+  }catch(e){
+    showToast('Send mail error: '+e.message,'error');
+  }finally{
+    btn.disabled=false; btn.innerHTML=origLabel;
+  }
+}
+
+// ─── Step 5: Preview ─────────────────────────────────────────────────────────
+function renderPreview(){
+  const cols=getExportCols();
+  const rows=S.filteredRows;
+  const isRPL=S.claimType==='RPL';
+
+  let tRPL=0,tPD=0,tMar=0;
+  rows.forEach(r=>{ tRPL+=numVal(r,'RPL VALUE'); tPD+=numVal(r,'PD VALUE'); tMar+=numVal(r,'MARGIN'); });
+
+  // Grand total bar
+  const gb=document.getElementById('grandTotalBar');
+  if(isRPL){
+    gb.innerHTML=`
+      <div>
+        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">RPL Value — Grand Total</p>
+        <p class="text-2xl font-extrabold text-brand font-mono">₹ ${fmt(tRPL)}</p>
+      </div>`;
+  } else {
+    gb.innerHTML=`
+      <div>
+        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">PD Value — Grand Total</p>
+        <p class="text-2xl font-extrabold text-rd font-mono">₹ ${fmt(tPD)}</p>
+      </div>
+      <div class="w-px bg-slate-800 self-stretch"></div>
+      <div>
+        <p class="text-xs text-slate-500 font-medium uppercase tracking-wide mb-1">Margin — Grand Total</p>
+        <p class="text-2xl font-extrabold text-teal font-mono">₹ ${fmt(tMar)}</p>
+      </div>`;
+  }
+
+  document.getElementById('selectedStockistLabel').textContent=S.selectedStockist;
+  markNum(5,false);
+
+  // Table
+  const valCols=isRPL?['RPL VALUE']:['PD VALUE','MARGIN'];
+  let html=`<div class="overflow-x-auto"><table class="w-full text-xs">
+    <thead>
+      <tr class="bg-slate-950">
+        ${cols.map(c=>`<th class="px-4 py-3 text-left font-bold text-slate-300 whitespace-nowrap border-b border-slate-800 uppercase tracking-wide text-[10px]">${c}</th>`).join('')}
+      </tr>
+    </thead><tbody>`;
+
+  rows.forEach((r,i)=>{
+    const bg=i%2===0?'bg-slate-900':'bg-slate-950/60';
+    html+=`<tr class="${bg} hover:bg-brand/5 transition-colors">`;
+    cols.forEach(c=>{
+      const key=findHeader(c);
+      const v=r[key]!==undefined?r[key]:'';
+      const isVal=valCols.includes(c);
+      const isMar=c==='MARGIN';
+      const isGST=c==='GST';
+      const isNum=NUM_COLS.includes(c);
+      let cls='px-4 py-2.5 border-b border-slate-800/50 ';
+      let disp=v;
+      if(isGST){
+        cls+='text-slate-300 text-right';
+        disp=fmtGST(v);
+      } else if(isVal){ cls+='text-brand font-bold text-right'; disp=`₹ ${fmt(parseFloat(v)||0)}`; }
+      else if(isMar){ cls+='text-teal font-bold text-right'; disp=`₹ ${fmt(parseFloat(v)||0)}`; }
+      else if(isNum){ cls+='text-slate-300 text-right'; disp=parseFloat(v)||0; }
+      else cls+='text-slate-300';
+      html+=`<td class="${cls}">${disp}</td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  // Total row
+  html+=`<tr class="bg-slate-800 border-t-2 border-slate-600">`;
+  cols.forEach((c,i)=>{
+    if(c==='RPL VALUE') html+=`<td class="px-4 py-3 font-extrabold text-brand text-right text-sm whitespace-nowrap">₹ ${fmt(tRPL)}</td>`;
+    else if(c==='PD VALUE') html+=`<td class="px-4 py-3 font-extrabold text-rd text-right text-sm whitespace-nowrap">₹ ${fmt(tPD)}</td>`;
+    else if(c==='MARGIN') html+=`<td class="px-4 py-3 font-extrabold text-teal text-right text-sm whitespace-nowrap">₹ ${fmt(tMar)}</td>`;
+    else if(i===0) html+=`<td class="px-4 py-3 font-extrabold text-white text-sm">GRAND TOTAL</td>`;
+    else html+=`<td class="px-4 py-3"></td>`;
+  });
+  html+=`</tr></tbody></table></div>`;
+  document.getElementById('previewWrap').innerHTML=html;
+}
+
+// ─── EXCEL (ExcelJS colorful) ─────────────────────────────────────────────────
+const THEME = {
+  RPL:{ titleBg:'FFF59E0B', titleFg:'FF1C1917', infoBg:'FFFFF7ED', infoFg:'FF92400E', hdrBg:'FFB45309', hdrFg:'FFFFFFFF', altRow:'FFFFF7ED', normRow:'FFFFFFFF', valFg:'FFB45309', marFg:'FF065F46', totBg:'FF78350F', totFg:'FFFFFFFF', totValFg:'FFFDE68A', border:'FFFBBF24' },
+  RD: { titleBg:'FF0EA5E9', titleFg:'FFFFFFFF', infoBg:'FFE0F2FE', infoFg:'FF075985', hdrBg:'FF075985', hdrFg:'FFFFFFFF', altRow:'FFF0F9FF', normRow:'FFFFFFFF', valFg:'FF0369A1', marFg:'FF065F46', totBg:'FF0C4A6E', totFg:'FFFFFFFF', totValFg:'FF67E8F9', border:'FF38BDF8' }
+};
+
+async function buildExcelBuffer(stockistName){
+  const st=getStockistInfo(stockistName);
+  const nk=S.headers.find(h=>h.toUpperCase().includes('STOCKIEST NAME')||h.toUpperCase().includes('STOCKIST NAME'))||'STOCKIEST NAME';
+  const rows=S.sheetData.filter(r=>String(r[nk]||'').trim()===stockistName);
+  const cols=getExportCols();
+  const isRPL=S.claimType==='RPL';
+  const T=isRPL?THEME.RPL:THEME.RD;
+  const colW={'PRODUCT NAME':26,'DIVISION':14,'QTY':8,'FREE':8,'GST':8,'MRP':10,'PTR':10,'PTS':10,'RPL VALUE':14,'PD VALUE':14,'MARGIN':14,'CSP':10,'REMARK':22,'REMARKS':22};
+
+  const wb=new ExcelJS.Workbook();
+  wb.creator='Pristine Pearl Pharma Pvt Ltd';
+  const ws=wb.addWorksheet(isRPL?'RPL CLAIM':'RD CLAIM',{pageSetup:{orientation:'landscape',fitToPage:true,fitToWidth:1}});
+  ws.columns=cols.map(c=>({width:colW[c]||14}));
+
+  const bord=(s,c)=>({style:s,color:{argb:c}});
+  const addInfoRow=(label,value,labelArgb,labelFg,valArgb)=>{
+    const lr=ws.addRow([label]);
+    ws.mergeCells(ws.rowCount,1,ws.rowCount,cols.length);
+    lr.height=18;
+    lr.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:labelArgb}};
+    lr.getCell(1).font={bold:true,size:11,color:{argb:labelFg}};
+    lr.getCell(1).alignment={horizontal:'left',vertical:'middle'};
+    const vr=ws.addRow([value]);
+    ws.mergeCells(ws.rowCount,1,ws.rowCount,cols.length);
+    vr.height=22;
+    vr.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:valArgb||'FFFAFAFA'}};
+    vr.getCell(1).font={bold:true,size:13,color:{argb:'FF1C1917'}};
+    vr.getCell(1).alignment={horizontal:'left',vertical:'middle'};
+  };
+
+  // Title
+  const claimMonth=getClaimMonth();
+  const genDate=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  const tr=ws.addRow([`PRISTINE PEARL PHARMA PVT LTD — ${S.claimType} CLAIM`]);
+  ws.mergeCells(1,1,1,cols.length);
+  tr.height=28;
+  tr.getCell(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:T.titleBg}};
+  tr.getCell(1).font={bold:true,size:14,color:{argb:T.titleFg}};
+  tr.getCell(1).alignment={horizontal:'center',vertical:'middle'};
+
+  ws.addRow([]); // spacer
+
+  addInfoRow('STOCKIST NAME',st.name||'',T.infoBg,T.infoFg);
+  addInfoRow('STOCKIST LOCATION',st.loc||'',T.infoBg,T.infoFg);
+  addInfoRow('CLAIM MONTH',claimMonth,T.infoBg,T.infoFg);
+  addInfoRow('GENERATED ON',genDate,T.infoBg,T.infoFg);
+
+  ws.addRow([]); // spacer before headers
+
+  // Header row
+  const hr=ws.addRow(cols);
+  hr.height=24;
+  hr.eachCell((cell,ci)=>{
+    cell.value=cols[ci-1];
+    cell.font={bold:true,size:11,color:{argb:T.hdrFg}};
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:T.hdrBg}};
+    cell.alignment={horizontal:'center',vertical:'middle'};
+    cell.border={top:bord('thin',T.border),bottom:bord('thin',T.border),left:bord('thin',T.border),right:bord('thin',T.border)};
+  });
+
+  // Data rows
+  rows.forEach((r,idx)=>{
+    const bg=idx%2===0?T.normRow:T.altRow;
+    const dr=ws.addRow(cols.map(c=>{
+      const k=findHeader(c);
+      const v=r[k];
+      if(c==='GST'){
+        // Store as percentage value (5 not 0.05)
+        const n=parseFloat(v)||0;
+        return (n>0&&n<=1)?n*100:n;
+      }
+      return NUM_COLS.includes(c)?(parseFloat(v)||0):(v||'');
+    }));
+    dr.height=18;
+    dr.eachCell((cell,ci)=>{
+      const c=cols[ci-1];
+      const isVal=['RPL VALUE','PD VALUE'].includes(c);
+      const isMar=c==='MARGIN';
+      const isGST=c==='GST';
+      const isNum=NUM_COLS.includes(c);
+      cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:bg}};
+      cell.font={size:10,bold:isVal||isMar,color:{argb:isVal?T.valFg:isMar?T.marFg:'FF1E293B'}};
+      cell.alignment={horizontal:(isNum||isGST)?'right':'left',vertical:'middle'};
+      if(isGST&&typeof cell.value==='number') cell.numFmt='0"%"';
+      else if(isNum&&typeof cell.value==='number') cell.numFmt='#,##0.00';
+      cell.border={top:bord('hair','FFDDDDDD'),bottom:bord('hair','FFDDDDDD'),left:bord('hair','FFDDDDDD'),right:bord('hair','FFDDDDDD')};
+    });
+  });
+
+  // Grand total row
+  const totalVals=cols.map((c,i)=>{
+    if(c==='RPL VALUE')return rows.reduce((s,r)=>s+numVal(r,'RPL VALUE'),0);
+    if(c==='PD VALUE') return rows.reduce((s,r)=>s+numVal(r,'PD VALUE'),0);
+    if(c==='MARGIN')   return rows.reduce((s,r)=>s+numVal(r,'MARGIN'),0);
+    if(i===0)return 'GRAND TOTAL';
+    return '';
+  });
+  const tot=ws.addRow(totalVals);
+  tot.height=26;
+  tot.eachCell((cell,ci)=>{
+    const c=cols[ci-1];
+    const isNum=['RPL VALUE','PD VALUE','MARGIN'].includes(c);
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:T.totBg}};
+    cell.font={bold:true,size:12,color:{argb:isNum?T.totValFg:T.totFg}};
+    cell.alignment={horizontal:isNum?'right':ci===1?'center':'left',vertical:'middle'};
+    if(isNum&&typeof cell.value==='number')cell.numFmt='#,##0.00';
+    cell.border={top:bord('medium',T.hdrBg),bottom:bord('medium',T.hdrBg),left:bord('thin',T.border),right:bord('thin',T.border)};
+  });
+
+  return await wb.xlsx.writeBuffer();
+}
+
+async function downloadExcel(){
+  const buf=await buildExcelBuffer(S.selectedStockist);
+  const st=getStockistInfo(S.selectedStockist);
+  const blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=`${S.claimType}_${st.name||'claim'}.xlsx`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Excel downloaded!','success');
+}
+
+// ─── PDF ─────────────────────────────────────────────────────────────────────
+function buildPDF(stockistName){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'landscape',unit:'pt',format:'a3'});
+  const isRPL=S.claimType==='RPL';
+  const st=getStockistInfo(stockistName);
+  const nk=S.headers.find(h=>h.toUpperCase().includes('STOCKIEST NAME')||h.toUpperCase().includes('STOCKIST NAME'))||'STOCKIEST NAME';
+  const rows=S.sheetData.filter(r=>String(r[nk]||'').trim()===stockistName);
+  const cols=getExportCols();
+
+  const hC=isRPL?[180,83,9]:[7,89,133];
+  const tC=isRPL?[120,53,9]:[12,74,110];
+  const aR=isRPL?[255,247,237]:[240,249,255];
+  const vC=isRPL?[245,158,11]:[14,165,233];
+
+  const claimMonth=getClaimMonth();
+  const genDate=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  doc.setFillColor(...hC); doc.rect(0,0,1190,66,'F');
+  if(S.logoDataUrl){
+    try{
+      const fmt=S.logoDataUrl.includes('image/png')?'PNG':'JPEG';
+      doc.addImage(S.logoDataUrl,fmt,1100,10,46,46);
+    }catch(e){ /* ignore bad image */ }
+  }
+  doc.setTextColor(255,255,255); doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text(`PRISTINE PEARL PHARMA PVT LTD — ${S.claimType} CLAIM`,30,26);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text(`Month: ${claimMonth}`,30,46);
+  doc.text(`Generated: ${genDate}`,860,46);
+
+  // Info box
+  doc.setFillColor(isRPL?255:224,isRPL?247:242,isRPL?237:254);
+  doc.roundedRect(20,74,560,52,6,6,'F');
+  doc.setFillColor(isRPL?255:224,isRPL?237:242,isRPL?213:254);
+  doc.roundedRect(600,74,570,52,6,6,'F');
+  doc.setTextColor(isRPL?146:7,isRPL?64:89,isRPL?14:133);
+  doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.text('STOCKIST NAME',32,91); doc.text('STOCKIST LOCATION',612,91);
+  doc.setFontSize(12); doc.setFont('helvetica','bold');
+  doc.setTextColor(30,41,59);
+  doc.text(st.name||'',32,114); doc.text(st.loc||'',612,114);
+
+  const td=rows.map(r=>cols.map(c=>{
+    const v=r[findHeader(c)];
+    if(c==='GST'){
+      const n=parseFloat(v)||0;
+      const pct=(n>0&&n<=1)?n*100:n;
+      return pct%1===0?pct.toFixed(0)+'%':pct.toFixed(2)+'%';
+    }
+    const isN=['RPL VALUE','PD VALUE','MARGIN','MRP','PTR','PTS','CSP'].includes(c);
+    return isN?`Rs.${fmt(parseFloat(v)||0)}`:(v||'');
+  }));
+
+  const totRow=cols.map(c=>{
+    if(c==='RPL VALUE')return`Rs.${fmt(rows.reduce((s,r)=>s+numVal(r,'RPL VALUE'),0))}`;
+    if(c==='PD VALUE') return`Rs.${fmt(rows.reduce((s,r)=>s+numVal(r,'PD VALUE'),0))}`;
+    if(c==='MARGIN')   return`Rs.${fmt(rows.reduce((s,r)=>s+numVal(r,'MARGIN'),0))}`;
+    if(cols.indexOf(c)===0)return'GRAND TOTAL';
+    return'';
+  });
+
+  doc.autoTable({
+    head:[cols], body:td, foot:[totRow], startY:136, margin:{left:20,right:20},
+    styles:{fontSize:8.5,cellPadding:5,font:'helvetica'},
+    headStyles:{fillColor:hC,textColor:[255,255,255],fontStyle:'bold',halign:'center'},
+    footStyles:{fillColor:tC,textColor:[255,255,255],fontStyle:'bold'},
+    alternateRowStyles:{fillColor:aR},
+    columnStyles:Object.fromEntries(cols.map((c,i)=>[i,{halign:(NUM_COLS.includes(c)||c==='GST')?'right':'left'}])),
+  });
+
+  const fy=doc.lastAutoTable.finalY+16;
+  doc.setFillColor(...tC);
+  doc.roundedRect(20,fy,isRPL?320:480,38,6,6,'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(11); doc.setFont('helvetica','bold');
+  if(isRPL){
+    doc.text(`RPL VALUE GRAND TOTAL: Rs.${fmt(rows.reduce((s,r)=>s+numVal(r,'RPL VALUE'),0))}`,32,fy+24);
+  } else {
+    doc.text(`PD VALUE: Rs.${fmt(rows.reduce((s,r)=>s+numVal(r,'PD VALUE'),0))}  |  MARGIN: Rs.${fmt(rows.reduce((s,r)=>s+numVal(r,'MARGIN'),0))}`,32,fy+24);
+  }
+  return doc;
+}
+
+function downloadPDF(){
+  buildPDF(S.selectedStockist).save(`${S.claimType}_${S.selectedStockist||'claim'}.pdf`);
+  showToast('PDF downloaded!','success');
+}
+
+// ─── BULK DOWNLOAD ────────────────────────────────────────────────────────────
+async function bulkDownload(){
+  if(!S.stockists.length){showToast('No stockists loaded','error');return;}
+  const modal=document.getElementById('bulkModal');
+  const prog=document.getElementById('bulkProgress');
+  const lab=document.getElementById('bulkProgressLabel');
+  const txt=document.getElementById('bulkStatusText');
+  modal.classList.remove('opacity-0','pointer-events-none');
+
+  try{
+    const zip=new JSZip();
+    const total=S.stockists.length;
+
+    for(let i=0;i<total;i++){
+      const s=S.stockists[i];
+      txt.textContent=`Building: ${s.name}`;
+      lab.textContent=`${i+1} / ${total}`;
+      prog.style.width=`${Math.round(((i+1)/total)*100)}%`;
+
+      const buf=await buildExcelBuffer(s.name);
+      const safeName=s.name.replace(/[\/\\?%*:|"<>]/g,'_');
+      zip.file(`${S.claimType}_${safeName}.xlsx`,buf);
+
+      await new Promise(r=>setTimeout(r,10));
+    }
+
+    txt.textContent='Compressing ZIP…';
+    prog.style.width='100%';
+    const blob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}},meta=>{
+      lab.textContent=`Compressing ${meta.percent.toFixed(0)}%`;
+    });
+
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url;
+    a.download=`${S.claimType}_ALL_STOCKISTS_${S.selectedSheet||'data'}.zip`; a.click();
+    URL.revokeObjectURL(url);
+    showToast(`ZIP downloaded — ${total} stockist files!`,'success');
+  }catch(e){
+    showToast('Bulk error: '+e.message,'error');
+  }finally{
+    modal.classList.add('opacity-0','pointer-events-none');
+    document.getElementById('bulkProgress').style.width='0%';
+  }
+}
+
+// ─── MAIL MODAL ───────────────────────────────────────────────────────────────
+function openMailModal(){
+  const cols=getExportCols();
+  const rows=S.filteredRows;
+  const st=getStockistInfo(S.selectedStockist);
+  const isRPL=S.claimType==='RPL';
+  const hBg=isRPL?'#B45309':'#075985';
+  const iBg=isRPL?'#FEF3C7':'#E0F2FE';
+  const iFg=isRPL?'#78350F':'#075985';
+  const hHBg=isRPL?'#92400E':'#0C4A6E';
+  const valFg=isRPL?'#92400E':'#0369A1';
+  const tBg=isRPL?'#78350F':'#0C4A6E';
+  const tVFg=isRPL?'#FDE68A':'#67E8F9';
+  const altRow=isRPL?'#FFFBEB':'#F0F9FF';
+
+  const claimMonth=getClaimMonth();
+  const genDate=new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  let html=`<div id="mailContent">
+<table style="font-family:Arial,sans-serif;border-collapse:collapse;border:2px solid #334155;min-width:500px;width:100%;">
+<tbody>
+  <tr><td colspan="${cols.length}" style="background:${hBg};color:#fff;padding:12px 16px;font-size:15px;font-weight:800;letter-spacing:.3px;border:1px solid ${hBg};">PRISTINE PEARL PHARMA PVT LTD &mdash; ${S.claimType} CLAIM</td></tr>
+  <tr>
+    <td colspan="${Math.ceil(cols.length/2)}" style="background:${iBg};color:${iFg};padding:5px 16px;font-size:10px;font-weight:700;letter-spacing:.8px;border:1px solid #cbd5e1;">CLAIM MONTH</td>
+    <td colspan="${cols.length - Math.ceil(cols.length/2)}" style="background:${iBg};color:${iFg};padding:5px 16px;font-size:10px;font-weight:700;letter-spacing:.8px;border:1px solid #cbd5e1;">GENERATED ON</td>
+  </tr>
+  <tr>
+    <td colspan="${Math.ceil(cols.length/2)}" style="background:#fff;color:#0f172a;padding:8px 16px;font-size:13px;font-weight:700;border:1px solid #cbd5e1;">${claimMonth}</td>
+    <td colspan="${cols.length - Math.ceil(cols.length/2)}" style="background:#fff;color:#0f172a;padding:8px 16px;font-size:13px;font-weight:700;border:1px solid #cbd5e1;">${genDate}</td>
+  </tr>
+  <tr><td colspan="${cols.length}" style="background:${iBg};color:${iFg};padding:5px 16px;font-size:10px;font-weight:700;letter-spacing:.8px;border:1px solid #cbd5e1;">STOCKIST NAME</td></tr>
+  <tr><td colspan="${cols.length}" style="background:#fff;color:#0f172a;padding:8px 16px;font-size:13px;font-weight:700;border:1px solid #cbd5e1;">${st.name||''}</td></tr>
+  <tr><td colspan="${cols.length}" style="background:${iBg};color:${iFg};padding:5px 16px;font-size:10px;font-weight:700;letter-spacing:.8px;border:1px solid #cbd5e1;">STOCKIST LOCATION</td></tr>
+  <tr><td colspan="${cols.length}" style="background:#fff;color:#0f172a;padding:8px 16px;font-size:13px;font-weight:700;border:1px solid #cbd5e1;">${st.loc||''}</td></tr>
+  <tr><td colspan="${cols.length}" style="background:#f8fafc;height:6px;border:none;font-size:1px;">&nbsp;</td></tr>
+  <tr>${cols.map(c=>`<th style="background:${hHBg};color:#fff;padding:8px 10px;border:1px solid #475569;font-size:10px;font-weight:700;text-align:center;white-space:nowrap;">${c}</th>`).join('')}</tr>`;
+
+  rows.forEach((r,i)=>{
+    const bg=i%2===0?'#ffffff':altRow;
+    html+=`<tr style="background:${bg};">`;
+    cols.forEach(c=>{
+      const key=findHeader(c); const v=r[key]!==undefined?r[key]:'';
+      const isVal=['RPL VALUE','PD VALUE'].includes(c); const isMar=c==='MARGIN';
+      const isGST=c==='GST';
+      const isN=NUM_COLS.includes(c);
+      const styl=isVal?`color:${valFg};font-weight:700;text-align:right;`:isMar?`color:#065F46;font-weight:700;text-align:right;`:(isN||isGST)?`text-align:right;`:``;
+      let disp;
+      if(isGST) disp=fmtGST(v);
+      else if((isVal||isMar)&&v!=='') disp=`&#8377; ${fmt(parseFloat(v)||0)}`;
+      else disp=v;
+      html+=`<td style="padding:6px 10px;border:1px solid #e2e8f0;font-size:11px;${styl}">${disp}</td>`;
+    });
+    html+=`</tr>`;
+  });
+
+  html+=`<tr>`;
+  cols.forEach((c,i)=>{
+    const isVal=['RPL VALUE','PD VALUE'].includes(c); const isMar=c==='MARGIN';
+    if(isVal){ const t=rows.reduce((s,r)=>s+numVal(r,c),0); html+=`<td style="background:${tBg};color:${tVFg};padding:10px;border:1px solid #475569;font-weight:800;font-size:12px;text-align:right;white-space:nowrap;">&#8377; ${fmt(t)}</td>`; }
+    else if(isMar){ const t=rows.reduce((s,r)=>s+numVal(r,'MARGIN'),0); html+=`<td style="background:${tBg};color:#6EE7B7;padding:10px;border:1px solid #475569;font-weight:800;font-size:12px;text-align:right;white-space:nowrap;">&#8377; ${fmt(t)}</td>`; }
+    else if(i===0) html+=`<td style="background:${tBg};color:#fff;padding:10px;border:1px solid #475569;font-weight:800;font-size:12px;text-align:center;white-space:nowrap;">GRAND TOTAL</td>`;
+    else html+=`<td style="background:${tBg};border:1px solid #475569;"></td>`;
+  });
+  html+=`</tr></tbody></table></div>
+  <div class="flex gap-3 mt-4 items-center">
+    <button onclick="copyMailTable()" class="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:brightness-110 active:scale-95 transition-all">
+      📋 Copy Table for Mail
+    </button>
+    <p class="text-xs text-slate-500">Paste directly into Gmail, Outlook, or any mail client.</p>
+  </div>`;
+
+  document.getElementById('mailBody').innerHTML=html;
+  document.getElementById('mailSubject').value=`${S.claimType} Claim — ${st.name||''} — ${claimMonth}`;
+  const m=document.getElementById('mailModal');
+  m.classList.remove('opacity-0','pointer-events-none');
+  document.getElementById('mailModalInner').classList.remove('translate-y-4');
+}
+
+function closeMailModal(){
+  document.getElementById('mailModal').classList.add('opacity-0','pointer-events-none');
+  document.getElementById('mailModalInner').classList.add('translate-y-4');
+}
+document.getElementById('mailModal').addEventListener('click',function(e){if(e.target===this)closeMailModal();});
+
+async function copyMailTable(){
+  const el=document.getElementById('mailContent');
+  try{
+    await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([el.innerHTML],{type:'text/html'}),'text/plain':new Blob([el.innerText],{type:'text/plain'})})]);
+  }catch(e){
+    const s=window.getSelection(); s.removeAllRanges();
+    const r=document.createRange(); r.selectNodeContents(el); s.addRange(r);
+    document.execCommand('copy'); s.removeAllRanges();
+  }
+  showToast('Copied! Paste into your mail.','success');
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg,type='success'){
+  const stack=document.getElementById('toastStack');
+  const t=document.createElement('div');
+  const colors=type==='error'?'bg-red-900 border-red-700 text-red-200':'bg-slate-800 border-slate-700 text-white';
+  const icon=type==='error'?'✕':'✓';
+  const ic=type==='error'?'text-red-400':'text-lime';
+  t.className=`flex items-center gap-3 px-4 py-3 rounded-xl border ${colors} text-sm font-medium shadow-xl animate-slide-up min-w-[220px]`;
+  t.innerHTML=`<span class="font-bold ${ic} text-base">${icon}</span>${msg}`;
+  stack.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);},3000);
+}
+</script>
+</body>
+</html>
