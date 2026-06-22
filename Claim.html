@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pristine Claim Processor</title>
+<title>Pristine Pearl Pharma Pvt Ltd — Claim Processor</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -675,26 +675,24 @@ async function sendMailWithAttachment(){
     URL.revokeObjectURL(url);
   }, 5000);
 
-  const mailto =
-    `mailto:${encodeURIComponent(to)}` +
-    `?cc=${encodeURIComponent(cc)}` +
-    `&subject=${encodeURIComponent(subject)}` +
-    `&body=${encodeURIComponent(
+const gmailUrl =
+  `https://mail.google.com/mail/?view=cm&fs=1` +
+  `&to=${encodeURIComponent(to)}` +
+  `&su=${encodeURIComponent(subject)}` +
+  `&body=${encodeURIComponent(
       `Dear Sir/Madam,
 
 Please find attached the ${S.claimType} claim for ${st.name}.
 
 Claim Month : ${getClaimMonth()}
 
-Note:
-The Excel file has already been downloaded.
-Kindly attach the downloaded file from your Downloads folder before sending.
 
 Regards,
-Pristine Pearl Pharma Pvt Ltd`
-    )}`;
 
-  window.top.location.href = mailto;
+Pristine Pearl Pharma Pvt Ltd`
+  )}`;
+
+window.open(gmailUrl, '_blank');
 
   showToast(
     'Mail opened. Attach the downloaded Excel from Downloads folder.',
