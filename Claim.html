@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pristine Pearl Pharma Pvt Ltd — Claim Processor</title>
+<title>Pristine Claim Processor</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -661,15 +661,46 @@ async function sendMailWithAttachment(){
   const bodyText=`To: ${to}${cc?`\nCC: ${cc}`:''}\n\nPlease find attached the ${S.claimType} claim for ${st.name||''} (${getClaimMonth()}).`;
 
   function fallbackDownloadAndMailto(file){
-    const url=URL.createObjectURL(file);
-    const a=document.createElement('a'); a.href=url; a.download=fileName; a.click();
+
+  const url = URL.createObjectURL(file);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  setTimeout(() => {
     URL.revokeObjectURL(url);
-    const mailto=`mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText+'\n\n(Attach the downloaded Excel file — this app/browser cannot auto-attach files)')}`;
-    // Delay slightly so the download click finishes first, then navigate directly
-    // (window.open after async work gets popup-blocked in many browsers — direct nav doesn't)
-    setTimeout(()=>{ window.location.href=mailto; },300);
-    showToast('Excel downloaded — your mail app should open next; attach the file manually','success');
-  }
+  }, 5000);
+
+  const mailto =
+    `mailto:${encodeURIComponent(to)}` +
+    `?cc=${encodeURIComponent(cc)}` +
+    `&subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(
+      `Dear Sir/Madam,
+
+Please find attached the ${S.claimType} claim for ${st.name}.
+
+Claim Month : ${getClaimMonth()}
+
+Note:
+The Excel file has already been downloaded.
+Kindly attach the downloaded file from your Downloads folder before sending.
+
+Regards,
+Pristine Pearl Pharma Pvt Ltd`
+    )}`;
+
+  window.top.location.href = mailto;
+
+  showToast(
+    'Mail opened. Attach the downloaded Excel from Downloads folder.',
+    'success'
+  );
+}
 
   try{
     const buf=await buildExcelBuffer(S.selectedStockist);
