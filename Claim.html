@@ -3,12 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pristine — Claim Processor</title>
-<link rel="icon"
-        href="https://www.pristinepearlpharma.in/images/alt-logo.png"
-        type="image/png">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<title>Pristine Pearl Pharma Pvt Ltd — Claim Processor</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -670,8 +665,10 @@ async function sendMailWithAttachment(){
     const a=document.createElement('a'); a.href=url; a.download=fileName; a.click();
     URL.revokeObjectURL(url);
     const mailto=`mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText+'\n\n(Attach the downloaded Excel file — this app/browser cannot auto-attach files)')}`;
-    window.open(mailto,'_blank');
-    showToast('Excel downloaded — attach it manually in the mail draft','success');
+    // Delay slightly so the download click finishes first, then navigate directly
+    // (window.open after async work gets popup-blocked in many browsers — direct nav doesn't)
+    setTimeout(()=>{ window.location.href=mailto; },300);
+    showToast('Excel downloaded — your mail app should open next; attach the file manually','success');
   }
 
   try{
