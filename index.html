@@ -634,6 +634,9 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
   <button class="tab-btn" onclick="switchTab('flash',this)">
     <svg class="tab-icon"><use href="#icon-flash"/></svg>Flash
   </button>
+  <button class="tab-btn" onclick="switchTab('claim',this)">
+  <svg class="tab-icon"><use href="#icon-note"/></svg>Claim
+</button>
 </nav>
 
 <!-- ════ STOCK ════ -->
@@ -1131,6 +1134,28 @@ input[type=number]::-webkit-inner-spin-button { opacity: 0.5; }
   <div id="flash-content">
     <div id="flash-summary-wrap"></div>
     <div id="flash-cards" class="flash-grid"></div>
+  </div>
+</div>
+
+<!-- ════ CLAIM ════ -->
+<div id="tab-claim" class="tab-content">
+  <div class="page-hd animate-in">
+    <div>
+      <div class="page-title">Claim Management</div>
+      <div class="page-sub">Claim Entry & Tracking</div>
+    </div>
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <iframe
+      src="https://pristinepearl.github.io/DepotOS/Claim"
+      style="
+        width:100%;
+        height:calc(100vh - 180px);
+        border:none;
+        background:#fff;
+      ">
+    </iframe>
   </div>
 </div>
 
